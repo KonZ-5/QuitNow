@@ -120,7 +120,7 @@ class HomeTab extends StatelessWidget {
     );
   }
 
-  // Modal Sukses Setelah Check-in
+  // Modal Sukses Setelah melakukan Check-in
   void _showSuccessModal(BuildContext context) {
     showDialog(
       context: context,
