@@ -101,68 +101,72 @@ class _EducationTabState extends State<EducationTab> {
                 ),
                 child: Column(
                   children: [
-                    // Bagian Utama Kartu (Bisa Diklik)
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          // Jika diklik ulang, tutup (null). Jika belum, buka indeks ini.
-                          expandedIndex = isExpanded ? null : index;
-                        });
-                        // Jika callback luar masih diperlukan, tetap dipanggil
-                        if (widget.openArticle != null) {
-                          widget.openArticle!(article.id);
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 43,
-                              height: 43,
-                              decoration: BoxDecoration(
-                                color: AppColors.cream,
-                                border: Border.all(
-                                  color: AppColors.ink,
-                                  width: 1.5,
+                    // [DIUBAH] Menambahkan Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback)
+                    // Asli sebelumnya menggunakan InkWell standar di atas Container tanpa pembungkus Material eksplisit.
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            // Jika diklik ulang, tutup (null). Jika belum, buka indeks ini.
+                            expandedIndex = isExpanded ? null : index;
+                          });
+                          // Jika callback luar masih diperlukan, tetap dipanggil
+                          if (widget.openArticle != null) {
+                            widget.openArticle!(article.id);
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 43,
+                                height: 43,
+                                decoration: BoxDecoration(
+                                  color: AppColors.cream,
+                                  border: Border.all(
+                                    color: AppColors.ink,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Icon(article.icon, color: AppColors.ink),
+                              ),
+                              const SizedBox(width: 13),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      article.category,
+                                      style: const TextStyle(
+                                        fontFamily: 'Space Grotesk',
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      article.title,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Icon(article.icon, color: AppColors.ink),
-                            ),
-                            const SizedBox(width: 13),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    article.category,
-                                    style: const TextStyle(
-                                      fontFamily: 'Space Grotesk',
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    article.title,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                              // Animasi rotasi panah saat terbuka
+                              AnimatedRotation(
+                                turns: isExpanded ? 0.25 : 0.0,
+                                duration: const Duration(milliseconds: 200),
+                                child: const Icon(
+                                  Icons.arrow_forward,
+                                  color: AppColors.ink,
+                                ),
                               ),
-                            ),
-                            // Animasi rotasi panah saat terbuka
-                            AnimatedRotation(
-                              turns: isExpanded ? 0.25 : 0.0,
-                              duration: const Duration(milliseconds: 200),
-                              child: const Icon(
-                                Icons.arrow_forward,
-                                color: AppColors.ink,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -205,6 +209,7 @@ class _EducationTabState extends State<EducationTab> {
                               ],
                             ),
                             const SizedBox(height: 8),
+                            // [DIUBAH] Merapikan modifier const pada teks ekspansi artikel agar sesuai linter M3
                             const Text(
                               "Berhenti merokok adalah proses pemulihan bertahap. Tubuh mulai merespons perubahan positif lebih cepat dari yang kamu bayangkan.",
                               style: TextStyle(

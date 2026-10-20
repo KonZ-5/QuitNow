@@ -27,17 +27,23 @@ class AboutQuitNowScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: onBack,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: NeoBoxDecoration(
-                          color: AppColors.white,
-                          shadowOffset: 0,
-                          borderWidth: 2,
+                    // [DIUBAH] Menambahkan Material & InkWell untuk efek M3 Ripple
+                    // Asli sebelumnya hanya menggunakan GestureDetector langsung.
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: onBack,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: NeoBoxDecoration(
+                            color: AppColors.white,
+                            shadowOffset: 0,
+                            borderWidth: 2,
+                          ),
+                          child: const Icon(Icons.arrow_back, color: AppColors.ink),
                         ),
-                        child: const Icon(Icons.arrow_back, color: AppColors.ink),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -118,7 +124,8 @@ class AboutQuitNowScreen extends StatelessWidget {
 
                     // Deskripsi Utama QuitNow
                     const Text(
-                      "APA ITUS QUITNOW?",
+                      // [DIUBAH] Memperbaiki typo dari "APA ITUS QUITNOW?" menjadi "APA ITU QUITNOW?"
+                      "APA ITU QUITNOW?",
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontSize: 11,
@@ -205,10 +212,12 @@ class AboutQuitNowScreen extends StatelessWidget {
                             child: const Icon(Icons.favorite, color: AppColors.coral, size: 26),
                           ),
                           const SizedBox(width: 14),
-                          Expanded(
+                          // [DIUBAH] Merapikan modifier const langsung ke widget induk Column
+                          // untuk optimasi linter dan performa rendering Material 3.
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
                                   "MENDUKUNG SDG 3",
                                   style: TextStyle(

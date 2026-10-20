@@ -42,9 +42,25 @@ class _ProfileTabState extends State<ProfileTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('AKUN & PREFERENSI', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+          const Text(
+            'AKUN & PREFERENSI',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.1,
+            ),
+          ),
           const SizedBox(height: 4),
-          const Text('Profil', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: -1)),
+          const Text(
+            'Profil',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -1,
+            ),
+          ),
           const SizedBox(height: 24),
 
           // User Card
@@ -58,15 +74,33 @@ class _ProfileTabState extends State<ProfileTab> {
                   height: 62,
                   decoration: NeoBoxDecoration(color: AppColors.cream, shadowOffset: 3),
                   alignment: Alignment.center,
-                  child: const Text('RA', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 21, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'RA',
+                    style: TextStyle(
+                      fontFamily: 'Space Grotesk',
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 15),
-                Column(
+                // [DIUBAH] Mengelompokkan teks profil pengguna di bawah satu const Column untuk efisiensi
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Rani Ardana', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 20, fontWeight: FontWeight.bold)),
+                  children: [
+                    Text(
+                      'Rani Ardana',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     SizedBox(height: 3),
-                    Text('Bergabung sejak Juni 2025', style: TextStyle(fontSize: 11, color: AppColors.text2)),
+                    Text(
+                      'Bergabung sejak Juni 2025',
+                      style: TextStyle(fontSize: 11, color: AppColors.text2),
+                    ),
                   ],
                 ),
               ],
@@ -78,19 +112,39 @@ class _ProfileTabState extends State<ProfileTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('CATATAN MOTIVASI HARI INI', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 13, fontWeight: FontWeight.bold)),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isEditingNote) {
-                      personalNote = _noteController.text;
-                    }
-                    isEditingNote = !isEditingNote;
-                  });
-                },
-                child: Text(
-                  isEditingNote ? 'Simpan' : 'Ubah catatan',
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+              const Text(
+                'CATATAN MOTIVASI HARI INI',
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // [DIUBAH] Menggunakan Material & InkWell untuk tombol 'Ubah Catatan / Simpan' 
+              // agar memiliki M3 ripple feedback saat disentuh.
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: () {
+                    setState(() {
+                      if (isEditingNote) {
+                        personalNote = _noteController.text;
+                      }
+                      isEditingNote = !isEditingNote;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: Text(
+                      isEditingNote ? 'Simpan' : 'Ubah catatan',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -103,11 +157,25 @@ class _ProfileTabState extends State<ProfileTab> {
                 ? TextField(
                     controller: _noteController,
                     maxLines: 3,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.ink),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: AppColors.ink,
+                    ),
+                    // [DIUBAH] Penyesuaian dekorasi TextField agar konsisten dengan M3 Input Field
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(borderSide: BorderSide(color: AppColors.ink, width: 2)),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.ink, width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.ink, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.ink, width: 2.5),
+                      ),
                       filled: true,
                       fillColor: AppColors.white,
+                      contentPadding: EdgeInsets.all(12),
                     ),
                   )
                 : Row(
@@ -118,7 +186,12 @@ class _ProfileTabState extends State<ProfileTab> {
                       Expanded(
                         child: Text(
                           personalNote,
-                          style: const TextStyle(fontFamily: 'Space Grotesk', fontSize: 13, fontWeight: FontWeight.bold, height: 1.4),
+                          style: const TextStyle(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                     ],
@@ -127,75 +200,124 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24),
 
           // Settings Section
-          const Text('PERJALANAN', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 13, fontWeight: FontWeight.bold)),
+          const Text(
+            'PERJALANAN',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 11),
           Container(
             decoration: NeoBoxDecoration(color: AppColors.white, shadowOffset: 3),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.settings, color: AppColors.ink),
-                  title: const Text('Edit perjalanan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  subtitle: const Text('Ubah tanggal dan kebiasaan awal', style: TextStyle(fontSize: 10, color: AppColors.text2)),
-                  trailing: const Icon(Icons.arrow_forward, color: AppColors.ink),
-                  onTap: widget.editJourney,
+            // [DIUBAH] Membungkus ListTile dengan Material agar efek riak M3 muncul sempurna di atas kartu putih
+            child: Material(
+              color: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.settings, color: AppColors.ink),
+                title: const Text(
+                  'Edit perjalanan',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
-              ],
+                subtitle: const Text(
+                  'Ubah tanggal dan kebiasaan awal',
+                  style: TextStyle(fontSize: 10, color: AppColors.text2),
+                ),
+                trailing: const Icon(Icons.arrow_forward, color: AppColors.ink),
+                onTap: widget.editJourney,
+              ),
             ),
           ),
           const SizedBox(height: 24),
 
           // Preferences Section
-          const Text('PREFERENSI', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 13, fontWeight: FontWeight.bold)),
+          const Text(
+            'PREFERENSI',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 11),
           Container(
             decoration: NeoBoxDecoration(color: AppColors.white, shadowOffset: 3),
-            child: Column(
-              children: [
-                SwitchListTile(
-                  value: notif,
-                  activeColor: AppColors.green,
-                  title: const Text('Notifikasi harian', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  subtitle: const Text('Pengingat suportif pukul 08.00', style: TextStyle(fontSize: 10, color: AppColors.text2)),
-                  onChanged: (val) => setState(() => notif = val),
+            child: Material(
+              color: Colors.transparent,
+              child: SwitchListTile(
+                value: notif,
+                // [DIUBAH] Menyesuaikan warna track & thumb Switch agar sesuai warna M3
+                // activeColor: AppColors.ink,
+                activeTrackColor: AppColors.green,
+                inactiveThumbColor: AppColors.ink,
+                inactiveTrackColor: AppColors.cream,
+                title: const Text(
+                  'Notifikasi harian',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
-              ],
+                subtitle: const Text(
+                  'Pengingat suportif pukul 08.00',
+                  style: TextStyle(fontSize: 10, color: AppColors.text2),
+                ),
+                onChanged: (val) => setState(() => notif = val),
+              ),
             ),
           ),
           const SizedBox(height: 24),
 
           // Data & Informasi Section
-          const Text('DATA & INFORMASI', style: TextStyle(fontFamily: 'Space Grotesk', fontSize: 13, fontWeight: FontWeight.bold)),
+          const Text(
+            'DATA & INFORMASI',
+            style: TextStyle(
+              fontFamily: 'Space Grotesk',
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 11),
           Container(
             decoration: NeoBoxDecoration(color: AppColors.white, shadowOffset: 3),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppColors.cream,
-                      border: Border.all(color: AppColors.ink, width: 1.5),
-                    ),
-                    child: const Icon(Icons.info_outline, size: 20, color: AppColors.ink),
+            child: Material(
+              color: Colors.transparent,
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.cream,
+                    border: Border.all(color: AppColors.ink, width: 1.5),
                   ),
-                  title: const Text('Tentang QuitNow', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  subtitle: const Text('Privasi, bantuan, dan versi 1.0', style: TextStyle(fontSize: 10, color: AppColors.text2)),
-                  trailing: const Icon(Icons.arrow_forward, color: AppColors.ink),
-                  onTap: widget.openAbout,
+                  child: const Icon(Icons.info_outline, size: 20, color: AppColors.ink),
                 ),
-              ],
+                title: const Text(
+                  'Tentang QuitNow',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                subtitle: const Text(
+                  'Privasi, bantuan, dan versi 1.0',
+                  style: TextStyle(fontSize: 10, color: AppColors.text2),
+                ),
+                trailing: const Icon(Icons.arrow_forward, color: AppColors.ink),
+                onTap: widget.openAbout,
+              ),
             ),
           ),
           const SizedBox(height: 32),
 
+          // Tombol Hapus Data
           Center(
             child: TextButton(
               onPressed: () => widget.confirm("delete"),
+              style: TextButton.styleFrom(
+                splashFactory: InkSparkle.splashFactory, // Standard M3 Ripple Effect
+              ),
               child: const Text(
                 'Hapus seluruh data',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
           ),
