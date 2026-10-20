@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../widgets/neo_button.dart';
@@ -14,6 +15,10 @@ class HomeTab extends StatelessWidget {
 
   // Modal Dialog Check-In Harian
   void _showCheckinModal(BuildContext context) {
+    // PERUBAHAN: Mengambil skema warna dan tipografi Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     showDialog(
       context: context,
       barrierColor: const Color(0xB8171717),
@@ -51,20 +56,20 @@ class HomeTab extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
 
-                // Judul & Subjudul
-                const Text(
+                // PERUBAHAN: Judul menggunakan TextTheme Material 3.
+                Text(
                   'Bagaimana harimu?',
-                  style: TextStyle(
+                  style: textTheme.headlineSmall?.copyWith(
                     fontFamily: 'Space Grotesk',
                     fontSize: 27,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.ink,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Pilih yang paling mendekati perasaanmu saat ini.',
-                  style: TextStyle(
+                  style: textTheme.bodyMedium?.copyWith(
                     fontSize: 13,
                     color: AppColors.text2,
                     height: 1.5,
@@ -99,14 +104,18 @@ class HomeTab extends StatelessWidget {
 
                 // Tombol "Nanti saja"
                 Center(
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                  child: TextButton(
+                    // PERUBAHAN: GestureDetector diganti TextButton
+                    // agar interaksi mengikuti pola Material 3.
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorScheme.onSurface,
+                    ),
                     child: const Text(
                       'Nanti saja',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.ink,
                         decoration: TextDecoration.underline,
                       ),
                     ),
@@ -122,6 +131,10 @@ class HomeTab extends StatelessWidget {
 
   // Modal Sukses Setelah melakukan Check-in
   void _showSuccessModal(BuildContext context) {
+    // PERUBAHAN: Menggunakan tipografi dan warna dari tema Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     showDialog(
       context: context,
       barrierColor: const Color(0xB8171717),
@@ -166,18 +179,21 @@ class HomeTab extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+
+                // PERUBAHAN: Judul menggunakan TextTheme Material 3.
+                Text(
                   'Bagus, Rani!',
-                  style: TextStyle(
+                  style: textTheme.headlineSmall?.copyWith(
                     fontFamily: 'Space Grotesk',
                     fontSize: 27,
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Check-in hari ini berhasil dicatat. Terima kasih sudah hadir untuk dirimu.',
-                  style: TextStyle(
+                  style: textTheme.bodyMedium?.copyWith(
                     fontSize: 13,
                     color: AppColors.text2,
                     height: 1.5,
@@ -198,6 +214,10 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // PERUBAHAN: Mengakses ColorScheme dan TextTheme Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
       child: Column(
@@ -209,43 +229,52 @@ class HomeTab extends StatelessWidget {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
+                  // PERUBAHAN: Header mengikuti TextTheme Material 3.
                   Text(
                     'SELAMAT PAGI!',
-                    style: TextStyle(
+                    style: textTheme.labelSmall?.copyWith(
                       fontFamily: 'Space Grotesk',
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.1,
+                      color: colorScheme.onSurface,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     'Halo, Rani.',
-                    style: TextStyle(
+                    style: textTheme.headlineMedium?.copyWith(
                       fontFamily: 'Space Grotesk',
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -1,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
-              GestureDetector(
-                onTap: () => navigateTab('profile'),
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: NeoBoxDecoration(
-                    color: AppColors.yellow,
-                    shadowOffset: 3,
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'RA',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontWeight: FontWeight.bold,
+
+              // PERUBAHAN: Menggunakan Semantics untuk aksesibilitas.
+              Semantics(
+                button: true,
+                label: 'Buka profil',
+                child: GestureDetector(
+                  onTap: () => navigateTab('profile'),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: NeoBoxDecoration(
+                      color: AppColors.yellow,
+                      shadowOffset: 3,
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'RA',
+                      style: TextStyle(
+                        fontFamily: 'Space Grotesk',
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -281,7 +310,11 @@ class HomeTab extends StatelessWidget {
                               letterSpacing: 0.8,
                             ),
                           ),
-                          Icon(Icons.eco, size: 25, color: AppColors.ink),
+                          Icon(
+                            Icons.eco,
+                            size: 25,
+                            color: AppColors.ink,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 14),
@@ -299,7 +332,10 @@ class HomeTab extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: 'HARI',
-                              style: TextStyle(fontSize: 31, letterSpacing: -1),
+                              style: TextStyle(
+                                fontSize: 31,
+                                letterSpacing: -1,
+                              ),
                             ),
                           ],
                         ),
@@ -321,7 +357,10 @@ class HomeTab extends StatelessWidget {
                 Container(
                   decoration: const BoxDecoration(
                     border: Border(
-                      top: BorderSide(color: AppColors.ink, width: 2),
+                      top: BorderSide(
+                        color: AppColors.ink,
+                        width: 2,
+                      ),
                     ),
                     color: AppColors.cream,
                   ),
@@ -355,61 +394,72 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Check-in Card
-          GestureDetector(
-            onTap: () => _showCheckinModal(context),
-            child: Container(
-              decoration: NeoBoxDecoration(color: AppColors.white),
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    width: 45,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      color: AppColors.coral,
-                      border: Border.all(color: AppColors.ink, width: 2),
-                    ),
-                    child: const Icon(Icons.favorite_border, color: AppColors.ink),
-                  ),
-                  const SizedBox(width: 13),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'CHECK-IN HARIAN',
-                          style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                          ),
+          // PERUBAHAN: Semantics menjelaskan aksi kartu kepada pembaca layar.
+          Semantics(
+            button: true,
+            label: 'Check-in harian. Bagaimana perasaanmu hari ini?',
+            child: GestureDetector(
+              onTap: () => _showCheckinModal(context),
+              child: Container(
+                decoration: NeoBoxDecoration(color: AppColors.white),
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: AppColors.coral,
+                        border: Border.all(
+                          color: AppColors.ink,
+                          width: 2,
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Bagaimana perasaanmu hari ini?',
-                          style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                      ),
+                      child: const Icon(
+                        Icons.favorite_border,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                    const SizedBox(width: 13),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'CHECK-IN HARIAN',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.1,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 5),
+                          Text(
+                            'Bagaimana perasaanmu hari ini?',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: NeoBoxDecoration(
-                      color: AppColors.yellow,
-                      shadowOffset: 2,
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: NeoBoxDecoration(
+                        color: AppColors.yellow,
+                        shadowOffset: 2,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        color: AppColors.ink,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.arrow_forward,
-                      color: AppColors.ink,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -418,19 +468,20 @@ class HomeTab extends StatelessWidget {
           // Tips Hari Ini
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'TIPS HARI INI',
-                style: TextStyle(
+                style: textTheme.titleSmall?.copyWith(
                   fontFamily: 'Space Grotesk',
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.9,
+                  color: colorScheme.onSurface,
                 ),
               ),
               Text(
                 '2 MENIT',
-                style: TextStyle(
+                style: textTheme.labelSmall?.copyWith(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: AppColors.text2,
@@ -439,75 +490,95 @@ class HomeTab extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 11),
-          GestureDetector(
-            onTap: () => navigateTab('education'),
-            child: Container(
-              decoration: NeoBoxDecoration(
-                color: AppColors.white,
-                shadowOffset: 3,
-              ),
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                children: [
-                  Container(
-                    width: 47,
-                    height: 47,
-                    decoration: BoxDecoration(
-                      color: AppColors.mint,
-                      border: Border.all(color: AppColors.ink, width: 1.5),
+
+          // PERUBAHAN: Semantics menandai kartu tips sebagai aksi.
+          Semantics(
+            button: true,
+            label: 'Buka edukasi: Alihkan keinginan dalam 5 menit',
+            child: GestureDetector(
+              onTap: () => navigateTab('education'),
+              child: Container(
+                decoration: NeoBoxDecoration(
+                  color: AppColors.white,
+                  shadowOffset: 3,
+                ),
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 47,
+                      height: 47,
+                      decoration: BoxDecoration(
+                        color: AppColors.mint,
+                        border: Border.all(
+                          color: AppColors.ink,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.eco,
+                        size: 28,
+                        color: AppColors.ink,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.eco,
-                      size: 28,
+                    const SizedBox(width: 13),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'Alihkan keinginan dalam 5 menit',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Minum air, tarik napas, lalu bergerak sebentar.',
+                            style: TextStyle(
+                              color: AppColors.text2,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward,
                       color: AppColors.ink,
                     ),
-                  ),
-                  const SizedBox(width: 13),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'Alihkan keinginan dalam 5 menit',
-                          style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Minum air, tarik napas, lalu bergerak sebentar.',
-                          style: TextStyle(
-                            color: AppColors.text2,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.arrow_forward, color: AppColors.ink),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
           const SizedBox(height: 24),
 
-          // PENCAPAIAN BERIKUTNYA (Sesuai Gambar Gambar Referensi)
+          // Pencapaian Berikutnya
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'PENCAPAIAN BERIKUTNYA',
-                style: TextStyle(
+                style: textTheme.titleSmall?.copyWith(
                   fontFamily: 'Space Grotesk',
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.9,
+                  color: colorScheme.onSurface,
                 ),
               ),
-              GestureDetector(
-                onTap: () => navigateTab('awards'),
+
+              // PERUBAHAN: TextButton mengikuti pola interaksi Material 3.
+              TextButton(
+                onPressed: () => navigateTab('awards'),
+                style: TextButton.styleFrom(
+                  foregroundColor: colorScheme.onSurface,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  minimumSize: const Size(0, 36),
+                ),
                 child: const Text(
                   'Lihat semua',
                   style: TextStyle(
@@ -520,112 +591,136 @@ class HomeTab extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 11),
-          GestureDetector(
-            onTap: () => navigateTab('awards'),
-            child: Container(
-              decoration: NeoBoxDecoration(
-                color: AppColors.white,
-                shadowOffset: 3,
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: AppColors.yellow,
-                      border: Border.all(color: AppColors.ink, width: 2),
-                    ),
-                    child: const Icon(
-                      Icons.emoji_events,
-                      size: 32,
-                      color: AppColors.ink,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  '7 HARI',
-                                  style: TextStyle(
-                                    fontFamily: 'Space Grotesk',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  'Pejuang Mingguan',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.text2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.mint,
-                                border: Border.all(color: AppColors.ink),
-                              ),
-                              child: const Text(
-                                '4 hari lagi',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
 
-                        // Progress Bar Neo-Brutalism
-                        Container(
-                          height: 11,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            border: Border.all(color: AppColors.ink, width: 1.5),
+          // PERUBAHAN: Semantics memberi label aksi pada kartu pencapaian.
+          Semantics(
+            button: true,
+            label: 'Lihat pencapaian Pejuang Mingguan',
+            child: GestureDetector(
+              onTap: () => navigateTab('awards'),
+              child: Container(
+                decoration: NeoBoxDecoration(
+                  color: AppColors.white,
+                  shadowOffset: 3,
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: AppColors.yellow,
+                        border: Border.all(
+                          color: AppColors.ink,
+                          width: 2,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.emoji_events,
+                        size: 32,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '7 HARI',
+                                      style: TextStyle(
+                                        fontFamily: 'Space Grotesk',
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Pejuang Mingguan',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.text2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // PERUBAHAN: Flexible mencegah badge meluber
+                              // ketika lebar layar perangkat terbatas.
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.mint,
+                                    border: Border.all(
+                                      color: AppColors.ink,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    '4 hari lagi',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: FractionallySizedBox(
-                            widthFactor: 0.43,
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: AppColors.darkGreen,
-                                border: Border(
-                                  right: BorderSide(
-                                    color: AppColors.ink,
-                                    width: 1.5,
+                          const SizedBox(height: 10),
+
+                          // Progress Bar Neo-Brutalism
+                          Container(
+                            height: 11,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              border: Border.all(
+                                color: AppColors.ink,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: FractionallySizedBox(
+                              widthFactor: 0.43,
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: AppColors.darkGreen,
+                                  border: Border(
+                                    right: BorderSide(
+                                      color: AppColors.ink,
+                                      width: 1.5,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Kamu sudah hampir setengah jalan. Teruskan!',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.text2,
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Kamu sudah hampir setengah jalan. Teruskan!',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppColors.text2,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -636,7 +731,10 @@ class HomeTab extends StatelessWidget {
             child: Text(
               'QuitNow mendukung perubahan positif, bukan pengganti saran tenaga kesehatan.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 10, color: AppColors.text2),
+              style: TextStyle(
+                fontSize: 10,
+                color: AppColors.text2,
+              ),
             ),
           ),
         ],
@@ -675,11 +773,16 @@ class _MoodButtonState extends State<_MoodButton> {
         duration: const Duration(milliseconds: 100),
         decoration: BoxDecoration(
           color: _isPressed ? AppColors.green : AppColors.white,
-          border: Border.all(color: AppColors.ink, width: 1.5),
+          border: Border.all(
+            color: AppColors.ink,
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.ink,
-              offset: _isPressed ? const Offset(1, 1) : const Offset(2, 2),
+              offset: _isPressed
+                  ? const Offset(1, 1)
+                  : const Offset(2, 2),
               blurRadius: 0,
             ),
           ],
@@ -692,11 +795,12 @@ class _MoodButtonState extends State<_MoodButton> {
         alignment: Alignment.center,
         child: Text(
           widget.label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-            color: AppColors.ink,
-          ),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: AppColors.ink,
+              ),
         ),
       ),
     );
@@ -716,13 +820,22 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // PERUBAHAN: Menggunakan TextTheme Material 3 untuk statistik.
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 11),
+      padding: const EdgeInsets.symmetric(
+        vertical: 14,
+        horizontal: 11,
+      ),
       decoration: BoxDecoration(
         border: Border(
           right: isLast
               ? BorderSide.none
-              : const BorderSide(color: AppColors.ink, width: 1.5),
+              : const BorderSide(
+                  color: AppColors.ink,
+                  width: 1.5,
+                ),
         ),
       ),
       child: Column(
@@ -730,16 +843,17 @@ class _StatItem extends StatelessWidget {
         children: [
           Text(
             value,
-            style: const TextStyle(
+            style: textTheme.titleMedium?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: AppColors.ink,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             label,
-            style: const TextStyle(
+            style: textTheme.bodySmall?.copyWith(
               fontSize: 10,
               color: AppColors.text2,
               height: 1.25,
