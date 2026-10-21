@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 
 class EducationTab extends StatefulWidget {
-  // Callback opsional jika masih ingin digunakan dari luar, tapi sekarang interaksinya inline
   final Function(String)? openArticle;
 
   const EducationTab({super.key, this.openArticle});
@@ -12,33 +11,41 @@ class EducationTab extends StatefulWidget {
 }
 
 class _EducationTabState extends State<EducationTab> {
-  // Melacak indeks artikel mana yang sedang terbuka (null berarti tidak ada yang terbuka)
   int? expandedIndex;
 
   @override
   Widget build(BuildContext context) {
+    // MINGGU 4: Penggunaan Skema Warna & Tipografi Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return SingleChildScrollView(
+      // MINGGU 5: Single-child layout Padding membungkus seluruh tab edukasi.
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'BACA & BERTUMBUH',
-            style: TextStyle(
+            // MINGGU 4: Label header menggunakan labelSmall Material 3.
+            style: textTheme.labelSmall?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Edukasi',
-            style: TextStyle(
+            // MINGGU 4: Judul utama menggunakan headlineMedium.
+            style: textTheme.headlineMedium?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 30,
               fontWeight: FontWeight.bold,
               letterSpacing: -1,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -49,6 +56,7 @@ class _EducationTabState extends State<EducationTab> {
               color: AppColors.darkGreen,
               shadowOffset: 4,
             ),
+            // MINGGU 5: Padding internal kartu pilihan hari ini.
             padding: const EdgeInsets.all(19),
             child: Row(
               children: [
@@ -84,7 +92,7 @@ class _EducationTabState extends State<EducationTab> {
           ),
           const SizedBox(height: 24),
 
-          // Article List dengan Inline Expandable Content
+          // Article List
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -101,22 +109,20 @@ class _EducationTabState extends State<EducationTab> {
                 ),
                 child: Column(
                   children: [
-                    // [DIUBAH] Menambahkan Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback)
-                    // Asli sebelumnya menggunakan InkWell standar di atas Container tanpa pembungkus Material eksplisit.
+                    // MINGGU 4: Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback).
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            // Jika diklik ulang, tutup (null). Jika belum, buka indeks ini.
                             expandedIndex = isExpanded ? null : index;
                           });
-                          // Jika callback luar masih diperlukan, tetap dipanggil
                           if (widget.openArticle != null) {
                             widget.openArticle!(article.id);
                           }
                         },
                         child: Padding(
+                          // MINGGU 5: Padding ruang dalam baris artikel.
                           padding: const EdgeInsets.all(15),
                           child: Row(
                             children: [
@@ -139,7 +145,8 @@ class _EducationTabState extends State<EducationTab> {
                                   children: [
                                     Text(
                                       article.category,
-                                      style: const TextStyle(
+                                      // MINGGU 4: Kategori menggunakan labelSmall.
+                                      style: textTheme.labelSmall?.copyWith(
                                         fontFamily: 'Space Grotesk',
                                         fontSize: 9,
                                         fontWeight: FontWeight.bold,
@@ -148,7 +155,8 @@ class _EducationTabState extends State<EducationTab> {
                                     const SizedBox(height: 4),
                                     Text(
                                       article.title,
-                                      style: const TextStyle(
+                                      // MINGGU 4: Judul artikel menggunakan titleSmall.
+                                      style: textTheme.titleSmall?.copyWith(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -156,7 +164,6 @@ class _EducationTabState extends State<EducationTab> {
                                   ],
                                 ),
                               ),
-                              // Animasi rotasi panah saat terbuka
                               AnimatedRotation(
                                 turns: isExpanded ? 0.25 : 0.0,
                                 duration: const Duration(milliseconds: 200),
@@ -171,7 +178,7 @@ class _EducationTabState extends State<EducationTab> {
                       ),
                     ),
 
-                    // Konten Tambahan yang Muncul ke Bawah Secara Animasi
+                    // Konten Tambahan yang Muncul ke Bawah
                     AnimatedCrossFade(
                       firstChild: const SizedBox.shrink(),
                       secondChild: Container(
@@ -200,7 +207,7 @@ class _EducationTabState extends State<EducationTab> {
                                 const SizedBox(width: 4),
                                 Text(
                                   "${article.time} baca",
-                                  style: const TextStyle(
+                                  style: textTheme.bodySmall?.copyWith(
                                     fontSize: 10,
                                     color: AppColors.text2,
                                     fontWeight: FontWeight.bold,
@@ -209,10 +216,9 @@ class _EducationTabState extends State<EducationTab> {
                               ],
                             ),
                             const SizedBox(height: 8),
-                            // [DIUBAH] Merapikan modifier const pada teks ekspansi artikel agar sesuai linter M3
-                            const Text(
+                            Text(
                               "Berhenti merokok adalah proses pemulihan bertahap. Tubuh mulai merespons perubahan positif lebih cepat dari yang kamu bayangkan.",
-                              style: TextStyle(
+                              style: textTheme.bodyMedium?.copyWith(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 height: 1.4,
@@ -220,9 +226,9 @@ class _EducationTabState extends State<EducationTab> {
                               ),
                             ),
                             const SizedBox(height: 6),
-                            const Text(
+                            Text(
                               "Dalam beberapa jam pertama, kadar oksigen meningkat dan karbon monoksida mulai menurun drastis. Konsistenlah dengan langkah kecilmu setiap hari.",
-                              style: TextStyle(
+                              style: textTheme.bodySmall?.copyWith(
                                 fontSize: 11,
                                 color: AppColors.text2,
                                 height: 1.4,
