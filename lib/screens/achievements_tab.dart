@@ -8,28 +8,37 @@ class AchievementsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MINGGU 4: Penggunaan Skema Warna & Tipografi Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return SingleChildScrollView(
+      // MINGGU 5: Single-child layout Padding membungkus seluruh halaman pencapaian.
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'KOLEKSIMU',
-            style: TextStyle(
+            // MINGGU 4: Label header menggunakan labelSmall Material 3.
+            style: textTheme.labelSmall?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Pencapaian',
-            style: TextStyle(
+            // MINGGU 4: Judul utama menggunakan headlineMedium Material 3.
+            style: textTheme.headlineMedium?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 30,
               fontWeight: FontWeight.bold,
               letterSpacing: -1,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -37,6 +46,7 @@ class AchievementsTab extends StatelessWidget {
           // Summary Card
           Container(
             decoration: NeoBoxDecoration(color: AppColors.green, shadowOffset: 4),
+            // MINGGU 5: Padding internal untuk kartu ringkasan.
             padding: const EdgeInsets.all(18),
             child: Row(
               children: [
@@ -50,31 +60,35 @@ class AchievementsTab extends StatelessWidget {
                   child: const Icon(Icons.emoji_events, size: 36, color: AppColors.ink),
                 ),
                 const SizedBox(width: 15),
-                // [DIUBAH] Merapikan teks ringkasan ke dalam satu const Column untuk efisiensi render M3
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'SUDAH TERBUKA',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SUDAH TERBUKA',
+                        style: textTheme.labelSmall?.copyWith(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      '2 dari 6',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 5),
+                      Text(
+                        '2 dari 6',
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 3),
-                    Text('Setiap progres pantas dirayakan.', style: TextStyle(fontSize: 11)),
-                  ],
+                      const SizedBox(height: 3),
+                      Text(
+                        'Setiap progres pantas dirayakan.',
+                        style: textTheme.bodySmall?.copyWith(fontSize: 11),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -99,13 +113,13 @@ class AchievementsTab extends StatelessWidget {
                   color: b.unlocked ? AppColors.white : AppColors.muted,
                   shadowOffset: 4,
                 ),
-                // [DIUBAH] Mengganti GestureDetector biasa dengan Material + InkWell 
-                // untuk mendukung efek State Layer / Ripple standar Material 3.
+                // MINGGU 4: Material + InkWell untuk merespons sentuhan dengan M3 State Layers (Ripple).
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () => onBadgeSelect(b),
                     child: Padding(
+                      // MINGGU 5: Padding dalam untuk konten kartu lencana.
                       padding: const EdgeInsets.all(12),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -128,11 +142,17 @@ class AchievementsTab extends StatelessWidget {
                           const SizedBox(height: 10),
                           Text(
                             '${b.days} HARI',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                           Text(
                             b.name,
-                            style: const TextStyle(fontSize: 10, color: AppColors.text2),
+                            style: textTheme.bodySmall?.copyWith(
+                              fontSize: 10,
+                              color: AppColors.text2,
+                            ),
                           ),
                         ],
                       ),

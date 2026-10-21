@@ -11,14 +11,22 @@ class AboutQuitNowScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MINGGU 4: Mengambil skema warna dan tipografi dari Theme context Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      // MINGGU 4: Menggunakan warna permukaan dari ColorScheme.
+      backgroundColor: colorScheme.surface == Colors.white
+          ? AppColors.cream
+          : colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Top Bar
+              // MINGGU 5: Container dengan padding simetris sebagai pembungkus header.
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 decoration: const BoxDecoration(
@@ -27,14 +35,14 @@ class AboutQuitNowScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // [DIUBAH] Menambahkan Material & InkWell untuk efek M3 Ripple
-                    // Asli sebelumnya hanya menggunakan GestureDetector langsung.
+                    // MINGGU 4: Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback).
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: onBack,
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
+                          // MINGGU 5: Container dengan dimensi spesifik untuk tombol kembali.
                           width: 40,
                           height: 40,
                           decoration: NeoBoxDecoration(
@@ -46,6 +54,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // MINGGU 5: SizedBox untuk menentukan jarak horizontal antar elemen.
                     const SizedBox(width: 14),
                     Row(
                       children: [
@@ -58,12 +67,14 @@ class AboutQuitNowScreen extends StatelessWidget {
                           child: const Icon(Icons.eco, size: 18, color: AppColors.ink),
                         ),
                         const SizedBox(width: 8),
-                        const Text(
+                        Text(
                           "Tentang QuitNow",
-                          style: TextStyle(
+                          // MINGGU 4: Tipografi judul header mengacu pada TextTheme titleMedium.
+                          style: textTheme.titleMedium?.copyWith(
                             fontFamily: 'Space Grotesk',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -73,6 +84,7 @@ class AboutQuitNowScreen extends StatelessWidget {
               ),
 
               Padding(
+                // MINGGU 5: Single-child layout Padding untuk membungkus konten utama.
                 padding: const EdgeInsets.all(22),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,19 +110,22 @@ class AboutQuitNowScreen extends StatelessWidget {
                             child: const Icon(Icons.eco, size: 36, color: AppColors.ink),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
+                          Text(
                             "QuitNow",
-                            style: TextStyle(
+                            // MINGGU 4: Tipografi merek utama menggunakan headlineMedium Material 3.
+                            style: textTheme.headlineMedium?.copyWith(
                               fontFamily: 'Space Grotesk',
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
                               letterSpacing: -1,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
+                          Text(
                             "Aplikasi Kesehatan Mobile · Versi 1.0",
-                            style: TextStyle(
+                            // MINGGU 4: Label versi menggunakan labelSmall TextTheme.
+                            style: textTheme.labelSmall?.copyWith(
                               fontFamily: 'Space Grotesk',
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -123,14 +138,15 @@ class AboutQuitNowScreen extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Deskripsi Utama QuitNow
-                    const Text(
-                      // [DIUBAH] Memperbaiki typo dari "APA ITUS QUITNOW?" menjadi "APA ITU QUITNOW?"
+                    Text(
                       "APA ITU QUITNOW?",
-                      style: TextStyle(
+                      // MINGGU 4: Subjudul section menggunakan labelSmall Material 3.
+                      style: textTheme.labelSmall?.copyWith(
                         fontFamily: 'Space Grotesk',
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -140,9 +156,10 @@ class AboutQuitNowScreen extends StatelessWidget {
                         shadowOffset: 3,
                       ),
                       padding: const EdgeInsets.all(18),
-                      child: const Text(
+                      child: Text(
                         "QuitNow adalah aplikasi kesehatan mobile yang dirancang untuk membantu pengguna menjalani proses berhenti merokok melalui pemantauan progres harian, pencapaian target, edukasi kesehatan, dan pembentukan kebiasaan positif.",
-                        style: TextStyle(
+                        // MINGGU 4: Teks deskripsi terhubung dengan bodyMedium Material 3.
+                        style: textTheme.bodyMedium?.copyWith(
                           fontSize: 14,
                           color: AppColors.ink,
                           height: 1.6,
@@ -153,18 +170,20 @@ class AboutQuitNowScreen extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Seksi Fitur Utama
-                    const Text(
+                    Text(
                       "FITUR UNGGULAN",
-                      style: TextStyle(
+                      style: textTheme.labelSmall?.copyWith(
                         fontFamily: 'Space Grotesk',
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 10),
 
                     _buildFeatureItem(
+                      context: context,
                       icon: Icons.timer_outlined,
                       color: AppColors.mint,
                       title: "Pemantauan Progres",
@@ -172,6 +191,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     _buildFeatureItem(
+                      context: context,
                       icon: Icons.account_balance_wallet_outlined,
                       color: AppColors.yellow,
                       title: "Estimasi Penghematan",
@@ -179,6 +199,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     _buildFeatureItem(
+                      context: context,
                       icon: Icons.emoji_events_outlined,
                       color: AppColors.coral,
                       title: "Pencapaian & Lencana",
@@ -186,6 +207,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     _buildFeatureItem(
+                      context: context,
                       icon: Icons.menu_book_outlined,
                       color: AppColors.mint,
                       title: "Edukasi & Tips Praktis",
@@ -212,25 +234,24 @@ class AboutQuitNowScreen extends StatelessWidget {
                             child: const Icon(Icons.favorite, color: AppColors.coral, size: 26),
                           ),
                           const SizedBox(width: 14),
-                          // [DIUBAH] Merapikan modifier const langsung ke widget induk Column
-                          // untuk optimasi linter dan performa rendering Material 3.
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   "MENDUKUNG SDG 3",
-                                  style: TextStyle(
+                                  style: textTheme.labelSmall?.copyWith(
                                     fontFamily: 'Space Grotesk',
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.9,
+                                    color: colorScheme.onSurface,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Text(
                                   "QuitNow berkomitmen mendukung Kehidupan Sehat dan Sejahtera.",
-                                  style: TextStyle(
+                                  style: textTheme.bodySmall?.copyWith(
                                     fontSize: 11,
                                     color: AppColors.ink,
                                     height: 1.4,
@@ -245,10 +266,10 @@ class AboutQuitNowScreen extends StatelessWidget {
                     const SizedBox(height: 30),
 
                     // Copyright Note
-                    const Center(
+                    Center(
                       child: Text(
                         "QUITNOW · HAK CIPTA DILINDUNGI",
-                        style: TextStyle(
+                        style: textTheme.labelSmall?.copyWith(
                           fontFamily: 'Space Grotesk',
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -268,16 +289,21 @@ class AboutQuitNowScreen extends StatelessWidget {
   }
 
   Widget _buildFeatureItem({
+    required BuildContext context,
     required IconData icon,
     required Color color,
     required String title,
     required String desc,
   }) {
+    // MINGGU 4: Menyelaraskan teks item fitur dengan TextTheme Material 3.
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
       decoration: NeoBoxDecoration(
         color: AppColors.white,
         shadowOffset: 3,
       ),
+      // MINGGU 5: Padding simetris untuk item fitur.
       padding: const EdgeInsets.all(14),
       child: Row(
         children: [
@@ -297,7 +323,7 @@ class AboutQuitNowScreen extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: textTheme.titleSmall?.copyWith(
                     fontFamily: 'Space Grotesk',
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -306,7 +332,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   desc,
-                  style: const TextStyle(
+                  style: textTheme.bodySmall?.copyWith(
                     fontSize: 11,
                     color: AppColors.text2,
                     height: 1.35,

@@ -37,28 +37,37 @@ class _ProfileTabState extends State<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
+    // MINGGU 4: Penggunaan Skema Warna & Tipografi Material 3.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return SingleChildScrollView(
+      // MINGGU 5: Single-child layout Padding membungkus seluruh tab profil.
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'AKUN & PREFERENSI',
-            style: TextStyle(
+            // MINGGU 4: Label header menggunakan labelSmall Material 3.
+            style: textTheme.labelSmall?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Profil',
-            style: TextStyle(
+            // MINGGU 4: Judul halaman menggunakan headlineMedium Material 3.
+            style: textTheme.headlineMedium?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 30,
               fontWeight: FontWeight.bold,
               letterSpacing: -1,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -70,6 +79,7 @@ class _ProfileTabState extends State<ProfileTab> {
             child: Row(
               children: [
                 Container(
+                  // MINGGU 5: Container dengan dimensi tetap untuk avatar pengguna.
                   width: 62,
                   height: 62,
                   decoration: NeoBoxDecoration(color: AppColors.cream, shadowOffset: 3),
@@ -84,24 +94,26 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                 ),
                 const SizedBox(width: 15),
-                // [DIUBAH] Mengelompokkan teks profil pengguna di bawah satu const Column untuk efisiensi
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Rani Ardana',
-                      style: TextStyle(
-                        fontFamily: 'Space Grotesk',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Rani Ardana',
+                        // MINGGU 4: Nama profil menggunakan titleMedium.
+                        style: textTheme.titleMedium?.copyWith(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 3),
-                    Text(
-                      'Bergabung sejak Juni 2025',
-                      style: TextStyle(fontSize: 11, color: AppColors.text2),
-                    ),
-                  ],
+                      const SizedBox(height: 3),
+                      Text(
+                        'Bergabung sejak Juni 2025',
+                        style: textTheme.bodySmall?.copyWith(fontSize: 11, color: AppColors.text2),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -112,16 +124,16 @@ class _ProfileTabState extends State<ProfileTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'CATATAN MOTIVASI HARI INI',
-                style: TextStyle(
+                style: textTheme.titleSmall?.copyWith(
                   fontFamily: 'Space Grotesk',
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
                 ),
               ),
-              // [DIUBAH] Menggunakan Material & InkWell untuk tombol 'Ubah Catatan / Simpan' 
-              // agar memiliki M3 ripple feedback saat disentuh.
+              // MINGGU 4: Material & InkWell untuk tombol aksi catatan dengan M3 ripple feedback.
               Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -157,12 +169,12 @@ class _ProfileTabState extends State<ProfileTab> {
                 ? TextField(
                     controller: _noteController,
                     maxLines: 3,
-                    style: const TextStyle(
+                    style: textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                       color: AppColors.ink,
                     ),
-                    // [DIUBAH] Penyesuaian dekorasi TextField agar konsisten dengan M3 Input Field
+                    // MINGGU 4: Penyesuaian dekorasi TextField M3 Input Field.
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: AppColors.ink, width: 2),
@@ -186,7 +198,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       Expanded(
                         child: Text(
                           personalNote,
-                          style: const TextStyle(
+                          style: textTheme.bodyMedium?.copyWith(
                             fontFamily: 'Space Grotesk',
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -200,18 +212,19 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24),
 
           // Settings Section
-          const Text(
+          Text(
             'PERJALANAN',
-            style: TextStyle(
+            style: textTheme.titleSmall?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 13,
               fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 11),
           Container(
             decoration: NeoBoxDecoration(color: AppColors.white, shadowOffset: 3),
-            // [DIUBAH] Membungkus ListTile dengan Material agar efek riak M3 muncul sempurna di atas kartu putih
+            // MINGGU 4: Material wrapper agar efek riak M3 ListTile muncul sempurna di atas kartu putih.
             child: Material(
               color: Colors.transparent,
               child: ListTile(
@@ -232,12 +245,13 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24),
 
           // Preferences Section
-          const Text(
+          Text(
             'PREFERENSI',
-            style: TextStyle(
+            style: textTheme.titleSmall?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 13,
               fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 11),
@@ -247,8 +261,7 @@ class _ProfileTabState extends State<ProfileTab> {
               color: Colors.transparent,
               child: SwitchListTile(
                 value: notif,
-                // [DIUBAH] Menyesuaikan warna track & thumb Switch agar sesuai warna M3
-                // activeColor: AppColors.ink,
+                // MINGGU 4: Penyesuaian warna track & thumb Switch sesuai standar M3.
                 activeTrackColor: AppColors.green,
                 inactiveThumbColor: AppColors.ink,
                 inactiveTrackColor: AppColors.cream,
@@ -267,12 +280,13 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24),
 
           // Data & Informasi Section
-          const Text(
+          Text(
             'DATA & INFORMASI',
-            style: TextStyle(
+            style: textTheme.titleSmall?.copyWith(
               fontFamily: 'Space Grotesk',
               fontSize: 13,
               fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 11),
@@ -309,7 +323,7 @@ class _ProfileTabState extends State<ProfileTab> {
             child: TextButton(
               onPressed: () => widget.confirm("delete"),
               style: TextButton.styleFrom(
-                splashFactory: InkSparkle.splashFactory, // Standard M3 Ripple Effect
+                splashFactory: InkSparkle.splashFactory, // MINGGU 4: Ripple M3 Standard
               ),
               child: const Text(
                 'Hapus seluruh data',
@@ -323,10 +337,10 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           const SizedBox(height: 16),
 
-          const Center(
+          Center(
             child: Text(
               "QUITNOW · MENDUKUNG SDG 3",
-              style: TextStyle(
+              style: textTheme.labelSmall?.copyWith(
                 fontFamily: 'Space Grotesk',
                 fontSize: 9,
                 fontWeight: FontWeight.bold,
