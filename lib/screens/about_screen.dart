@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 
+// MINGGU 6 [BARU]: Model data sederhana untuk item fitur.
+// Dipakai oleh ListView.separated supaya 4 item fitur tidak ditulis manual satu-satu.
+class _FeatureData {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String desc;
+
+  const _FeatureData({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.desc,
+  });
+}
+
 class AboutQuitNowScreen extends StatelessWidget {
   final VoidCallback onBack;
 
@@ -8,6 +24,35 @@ class AboutQuitNowScreen extends StatelessWidget {
     super.key,
     required this.onBack,
   });
+
+  // MINGGU 6 [BARU - POIN 5]: Daftar fitur dipindah menjadi data list.
+  // Isi teks, warna, dan ikon SAMA PERSIS dengan versi sebelumnya.
+  static const List<_FeatureData> _features = [
+    _FeatureData(
+      icon: Icons.timer_outlined,
+      color: AppColors.mint,
+      title: "Pemantauan Progres",
+      desc: "Memantau durasi bebas rokok secara mendalam setiap hari.",
+    ),
+    _FeatureData(
+      icon: Icons.account_balance_wallet_outlined,
+      color: AppColors.yellow,
+      title: "Estimasi Penghematan",
+      desc: "Menghitung rokok yang dihindari dan estimasi uang yang dihemat.",
+    ),
+    _FeatureData(
+      icon: Icons.emoji_events_outlined,
+      color: AppColors.coral,
+      title: "Pencapaian & Lencana",
+      desc: "Merayakan setiap milestone perjalanan bebas rokokmu.",
+    ),
+    _FeatureData(
+      icon: Icons.menu_book_outlined,
+      color: AppColors.mint,
+      title: "Edukasi & Tips Praktis",
+      desc: "Akses informasi tepercaya untuk membangun gaya hidup sehat.",
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +66,8 @@ class AboutQuitNowScreen extends StatelessWidget {
           ? AppColors.cream
           : colorScheme.surface,
       body: SafeArea(
+        // MINGGU 6 [POIN 1]: SingleChildScrollView membungkus Column (multi-child widget)
+        // sehingga seluruh halaman bisa di-scroll. Column menyusun banyak child secara vertikal.
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,6 +80,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                   color: AppColors.cream,
                   border: Border(bottom: BorderSide(color: AppColors.ink, width: 2)),
                 ),
+                // MINGGU 6 [POIN 2]: Row menyusun tombol kembali + judul secara horizontal.
                 child: Row(
                   children: [
                     // MINGGU 4: Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback).
@@ -56,28 +104,38 @@ class AboutQuitNowScreen extends StatelessWidget {
                     ),
                     // MINGGU 5: SizedBox untuk menentukan jarak horizontal antar elemen.
                     const SizedBox(width: 14),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: AppColors.green,
-                            border: Border.all(color: AppColors.ink, width: 1.5),
+                    // MINGGU 6 [BARU - POIN 3]: Row judul dibungkus Expanded
+                    // agar mengambil sisa ruang di samping tombol kembali.
+                    // Tampilan tidak berubah, hanya mencegah overflow di layar sempit.
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: AppColors.green,
+                              border: Border.all(color: AppColors.ink, width: 1.5),
+                            ),
+                            child: const Icon(Icons.eco, size: 18, color: AppColors.ink),
                           ),
-                          child: const Icon(Icons.eco, size: 18, color: AppColors.ink),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Tentang QuitNow",
-                          // MINGGU 4: Tipografi judul header mengacu pada TextTheme titleMedium.
-                          style: textTheme.titleMedium?.copyWith(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
+                          const SizedBox(width: 8),
+                          // MINGGU 6 [BARU - POIN 3]: Expanded kedua untuk teks judul,
+                          // ditambah ellipsis supaya teks panjang tidak menabrak batas.
+                          Expanded(
+                            child: Text(
+                              "Tentang QuitNow",
+                              overflow: TextOverflow.ellipsis, // MINGGU 6 [BARU]
+                              // MINGGU 4: Tipografi judul header mengacu pada TextTheme titleMedium.
+                              style: textTheme.titleMedium?.copyWith(
+                                fontFamily: 'Space Grotesk',
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -90,6 +148,13 @@ class AboutQuitNowScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Hero Branding Card
+                    // MINGGU 6 [BARU - POIN 4]: Stack membungkus hero card agar ada lapisan
+                    // kedua (kotak badge "V1.0") yang menumpuk di atas kartu hijau.
+                    // Lapisan 1 = Container kartu (ukuran Stack mengikuti kartu ini),
+                    // lapisan 2 = Positioned badge di pojok kanan atas.
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
                     Container(
                       width: double.infinity,
                       decoration: NeoBoxDecoration(
@@ -98,6 +163,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                         borderWidth: 3,
                       ),
                       padding: const EdgeInsets.all(22),
+                      // MINGGU 6 [POIN 2]: Column menumpuk ikon, nama aplikasi, dan versi ke bawah.
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -123,7 +189,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "Aplikasi Kesehatan Mobile · Versi 1.0",
+                            "Aplikasi Kesehatan Mobile",
                             // MINGGU 4: Label versi menggunakan labelSmall TextTheme.
                             style: textTheme.labelSmall?.copyWith(
                               fontFamily: 'Space Grotesk',
@@ -134,6 +200,30 @@ class AboutQuitNowScreen extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ),
+                    // MINGGU 6 [BARU - POIN 4]: Lapisan atas Stack: kotak badge versi.
+                    // Warna kuning + border ink 2 px sama dengan kotak ikon daun di sebelah kirinya.
+                    Positioned(
+                      top: 16,
+                      right: 16,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.yellow,
+                          border: Border.all(color: AppColors.ink, width: 2),
+                        ),
+                        child: Text(
+                          "V1.0",
+                          style: textTheme.labelSmall?.copyWith(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.ink,
+                          ),
+                        ),
+                      ),
+                    ),
+                      ],
                     ),
                     const SizedBox(height: 24),
 
@@ -182,36 +272,31 @@ class AboutQuitNowScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
 
-                    _buildFeatureItem(
-                      context: context,
-                      icon: Icons.timer_outlined,
-                      color: AppColors.mint,
-                      title: "Pemantauan Progres",
-                      desc: "Memantau durasi bebas rokok secara mendalam setiap hari.",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(
-                      context: context,
-                      icon: Icons.account_balance_wallet_outlined,
-                      color: AppColors.yellow,
-                      title: "Estimasi Penghematan",
-                      desc: "Menghitung rokok yang dihindari dan estimasi uang yang dihemat.",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(
-                      context: context,
-                      icon: Icons.emoji_events_outlined,
-                      color: AppColors.coral,
-                      title: "Pencapaian & Lencana",
-                      desc: "Merayakan setiap milestone perjalanan bebas rokokmu.",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(
-                      context: context,
-                      icon: Icons.menu_book_outlined,
-                      color: AppColors.mint,
-                      title: "Edukasi & Tips Praktis",
-                      desc: "Akses informasi tepercaya untuk membangun gaya hidup sehat.",
+                    // MINGGU 6 [DIUBAH - POIN 5]: 4 pemanggilan _buildFeatureItem manual
+                    // (yang dipisah SizedBox(height: 12)) diganti dengan ListView.separated.
+                    // Hasil tampilan sama: jarak antar item tetap 12 px.
+                    ListView.separated(
+                      // shrinkWrap + NeverScrollableScrollPhysics wajib karena ListView ini
+                      // berada di dalam SingleChildScrollView (agar tidak bentrok scroll).
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      // padding zero agar ListView tidak menambah padding bawaan.
+                      padding: EdgeInsets.zero,
+                      // Clip.none supaya bayangan neo (shadow offset) di sisi kanan/bawah
+                      // item tidak terpotong oleh batas ListView.
+                      clipBehavior: Clip.none,
+                      itemCount: _features.length,
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = _features[index];
+                        return _buildFeatureItem(
+                          context: context,
+                          icon: item.icon,
+                          color: item.color,
+                          title: item.title,
+                          desc: item.desc,
+                        );
+                      },
                     ),
                     const SizedBox(height: 28),
 
@@ -222,6 +307,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                         shadowOffset: 4,
                       ),
                       padding: const EdgeInsets.all(18),
+                      // MINGGU 6 [POIN 2]: Row menyejajarkan kotak ikon (kiri) dan teks (kanan).
                       child: Row(
                         children: [
                           Container(
@@ -234,6 +320,8 @@ class AboutQuitNowScreen extends StatelessWidget {
                             child: const Icon(Icons.favorite, color: AppColors.coral, size: 26),
                           ),
                           const SizedBox(width: 14),
+                          // MINGGU 6 [POIN 3]: Expanded membuat kolom teks mengambil
+                          // seluruh sisa lebar di samping kotak ikon.
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,6 +393,7 @@ class AboutQuitNowScreen extends StatelessWidget {
       ),
       // MINGGU 5: Padding simetris untuk item fitur.
       padding: const EdgeInsets.all(14),
+      // MINGGU 6 [POIN 2]: Row = kotak ikon di kiri, Column teks di kanan.
       child: Row(
         children: [
           Container(
@@ -314,9 +403,18 @@ class AboutQuitNowScreen extends StatelessWidget {
               color: color,
               border: Border.all(color: AppColors.ink, width: 1.5),
             ),
-            child: Icon(icon, color: AppColors.ink, size: 22),
+            // MINGGU 6 [BARU - POIN 4]: Stack dipakai sebagai wadah ikon.
+            // alignment center membuat posisi ikon IDENTIK dengan sebelumnya.
+            // Stack siap menampung lapisan tambahan (mis. badge) tanpa mengubah layout.
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(icon, color: AppColors.ink, size: 22),
+              ],
+            ),
           ),
           const SizedBox(width: 14),
+          // MINGGU 6 [POIN 3]: Expanded agar teks mengisi sisa lebar & otomatis wrap ke baris baru.
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
