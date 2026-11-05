@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
+import '../utils/responsive.dart';
+import '../widgets/adaptive_layout.dart';
 
 // MINGGU 6 [DIUBAH]: StatelessWidget diganti StatefulWidget karena carousel
 // perlu menyimpan halaman yang sedang aktif (_currentPage) dan PageController.
@@ -53,12 +55,26 @@ class _AchievementsTabState extends State<AchievementsTab> {
     // MINGGU 6 [BARU - POIN 6]: Jumlah total lencana = jumlah halaman carousel.
     final total = globalBadges.length;
 
+    // RESPONSIVE: ukuran layar & skala font sistem memengaruhi tinggi carousel
+    // dan sel grid (tinggi tetap + teks lebih panjang = overflow).
+    // MINGGU 7: Membaca orientasi layar (orientation) dan ukurannya untuk responsivitas UI.
+    final r = Responsive.of(context);
+    final bool narrow = r.isUltraNarrow;
+    
+    // MINGGU 7: Membaca skala teks OS perangkat (screen size detail) untuk melakukan adaptasi layout pada tinggi sel.
+    final double textScale =
+        (MediaQuery.textScalerOf(context).scale(10) / 10).clamp(1.0, 1.4).toDouble();
+
     // MINGGU 6 [POIN 1]: SingleChildScrollView membungkus Column (multi-child widget)
     // sehingga halaman bisa di-scroll dan banyak widget tersusun vertikal.
     return SingleChildScrollView(
       // MINGGU 5: Single-child layout Padding membungkus seluruh halaman pencapaian.
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
-      child: Column(
+      // MINGGU 7: Padding horizontal halaman beradaptasi (layout adaptation) mengikuti ukuran layar.
+      padding: EdgeInsets.fromLTRB(r.pagePadding, 24, r.pagePadding, r.pageBottomPadding),
+      // MINGGU 7: CenteredContent memberikan batasan (constraint) lebar maksimal konten.
+      child: CenteredContent(
+        maxWidth: Responsive.maxContentWidth,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -78,7 +94,8 @@ class _AchievementsTabState extends State<AchievementsTab> {
             // MINGGU 4: Judul utama menggunakan headlineMedium Material 3.
             style: textTheme.headlineMedium?.copyWith(
               fontFamily: 'Space Grotesk',
-              fontSize: 30,
+              // MINGGU 7: Pemilihan ukuran font beradaptasi (layout adaptation) berdasarkan kategori ukuran layar.
+              fontSize: r.pick(ultraNarrow: 22.0, compact: 30.0, expanded: 34.0),
               fontWeight: FontWeight.bold,
               letterSpacing: -1,
               color: colorScheme.onSurface,
@@ -86,6 +103,14 @@ class _AchievementsTabState extends State<AchievementsTab> {
           ),
           const SizedBox(height: 24),
 
+          // ADAPTIVE: portrait = carousel di atas, grid di bawah (1 kolom).
+          // Lebar/landscape = carousel + kontrol di kiri, grid lencana di kanan.
+          // MINGGU 7: AdaptiveColumns mengatur tata letak responsif berdasarkan orientasi layar (orientation).
+          AdaptiveColumns(
+            breakpoint: 640,
+            primaryFlex: 5,
+            secondaryFlex: 6,
+            primary: [
           // Summary Card
           // MINGGU 6 [DIUBAH - POIN 6]: Kartu ringkasan "2 dari 6" diubah menjadi CAROUSEL.
           // Bisa digeser (swipe) atau lewat tombol panah di bawahnya.
@@ -95,7 +120,8 @@ class _AchievementsTabState extends State<AchievementsTab> {
             // MINGGU 6 [DIPERBAIKI]: tinggi dinaikkan 100 -> 118 karena kartu aslinya setinggi
             // +-110 px (3 baris teks) + 4 px ruang bayangan neo. Sebelumnya 100 px menyebabkan
             // "BOTTOM OVERFLOWED BY 14 PIXELS". Sisa ruang kecil dibiarkan sebagai cadangan.
-            height: 118,
+            // MINGGU 7: Tinggi carousel melakukan adaptasi layout terhadap orientasi layar dan skala teks.
+            height: (r.isStacked ? 210.0 : 118.0) * textScale,
             // MINGGU 6 [POIN 4]: Stack + Positioned(right: -4) dipakai agar lebar kartu
             // tetap SAMA dengan desain awal; 4 px ekstra hanya untuk ruang bayangan neo
             // sehingga bayangan tidak terpotong oleh PageView.
@@ -153,7 +179,8 @@ class _AchievementsTabState extends State<AchievementsTab> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+            ],
+            secondary: [
 
           // Badges Grid
           // MINGGU 6 [POIN 5]: GridView.builder menampilkan koleksi lencana 2 kolom.
@@ -166,12 +193,22 @@ class _AchievementsTabState extends State<AchievementsTab> {
             clipBehavior: Clip.none,
             // MINGGU 6 [BARU]: padding zero agar GridView tidak menambah padding bawaan.
             padding: EdgeInsets.zero,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 17,
-              mainAxisSpacing: 17,
-              childAspectRatio: 0.85,
-            ),
+            // MINGGU 7: Konfigurasi Grid melakukan adaptasi layout berdasarkan orientasi layar (isStacked).
+            gridDelegate: r.isStacked
+                ? SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 12,
+                    // MINGGU 7: mainAxisExtent melakukan adaptasi layout terhadap skala teks sistem.
+                    mainAxisExtent: 170.0 * textScale,
+                  )
+                : SliverGridDelegateWithMaxCrossAxisExtent(
+                    // MINGGU 7: maxCrossAxisExtent membatasi (constraint) lebar maksimal sel grid untuk kalkulasi kolom secara otomatis.
+                    maxCrossAxisExtent: 200,
+                    crossAxisSpacing: 17,
+                    mainAxisSpacing: 17,
+                    // MINGGU 7: mainAxisExtent melakukan adaptasi layout terhadap skala teks sistem.
+                    mainAxisExtent: 176.0 * textScale,
+                  ),
             itemCount: globalBadges.length,
             itemBuilder: (context, index) {
               final b = globalBadges[index];
@@ -187,14 +224,16 @@ class _AchievementsTabState extends State<AchievementsTab> {
                     onTap: () => widget.onBadgeSelect(b),
                     child: Padding(
                       // MINGGU 5: Padding dalam untuk konten kartu lencana.
-                      padding: const EdgeInsets.all(12),
+                      // MINGGU 7: Padding dalam sel grid beradaptasi (layout adaptation) mengikuti ukuran layar.
+                      padding: EdgeInsets.all(narrow ? 8 : 12),
                       // MINGGU 6 [POIN 2]: Column menumpuk ikon, jumlah hari, dan nama lencana.
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 64,
-                            height: 64,
+                            // MINGGU 7: Dimensi avatar lencana beradaptasi (layout adaptation) mengikuti ukuran layar (screen size).
+                            width: narrow ? 52 : 64,
+                            height: narrow ? 52 : 64,
                             decoration: BoxDecoration(
                               color: b.unlocked
                                   ? (b.color == "yellow" ? AppColors.yellow : AppColors.green)
@@ -237,7 +276,10 @@ class _AchievementsTabState extends State<AchievementsTab> {
               );
             },
           ),
+            ],
+          ),
         ],
+      ),
       ),
     );
   }
@@ -247,6 +289,8 @@ class _AchievementsTabState extends State<AchievementsTab> {
   // Terkunci -> kartu abu-abu, kotak ikon abu-abu, ikon perisai (sama dengan lencana terkunci di grid).
   Widget _buildSummaryCard(int index, int total, TextTheme textTheme) {
     final unlocked = globalBadges[index].unlocked;
+    // MINGGU 7: Mengecek ukuran layar (screen size) spesifik di dalam fungsi builder.
+    final bool narrowCard = Responsive.of(context).isUltraNarrow;
 
     // MINGGU 6 [DIPERBAIKI]: Align(topCenter) melonggarkan batas tinggi dari PageView,
     // sehingga kartu memakai tinggi alaminya (sama seperti desain awal) dan tidak overflow.
@@ -262,24 +306,29 @@ class _AchievementsTabState extends State<AchievementsTab> {
           shadowOffset: 4,
         ),
         // MINGGU 5: Padding internal untuk kartu ringkasan.
-        padding: const EdgeInsets.all(18),
+        // MINGGU 7: Padding kartu beradaptasi (layout adaptation) terhadap ukuran layar.
+        padding: EdgeInsets.all(narrowCard ? 10 : 18),
         // MINGGU 6 [POIN 2]: Row menyejajarkan kotak ikon (kiri) dan teks (kanan).
-        child: Row(
+        // MINGGU 7: Menggunakan AdaptiveRow untuk konten kartu ringkasan agar beradaptasi dengan orientasi layar.
+        child: AdaptiveRow(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              // MINGGU 7: Dimensi lebar dan tinggi ikon beradaptasi (layout adaptation) dengan ukuran layar (screen size).
+              width: narrowCard ? 44 : 60,
+              height: narrowCard ? 44 : 60,
               decoration: BoxDecoration(
                 color: unlocked ? AppColors.yellow : AppColors.muted,
                 border: Border.all(color: AppColors.ink, width: 2),
               ),
               child: Icon(
                 unlocked ? Icons.emoji_events : Icons.shield_outlined,
-                size: 36,
+                // MINGGU 7: Ukuran font/ikon beradaptasi mengikuti besaran layar (screen size).
+                size: narrowCard ? 26 : 36,
                 color: AppColors.ink,
               ),
             ),
-            const SizedBox(width: 15),
+            // MINGGU 7: Jarak antar elemen dalam layout beradaptasi (layout adaptation) terhadap besaran layar.
+            SizedBox(width: narrowCard ? 8 : 15),
             // MINGGU 6 [POIN 3]: Expanded membuat kolom teks mengambil sisa lebar
             // di samping kotak ikon.
             Expanded(
@@ -303,7 +352,8 @@ class _AchievementsTabState extends State<AchievementsTab> {
                     '${index + 1} dari $total',
                     style: textTheme.headlineSmall?.copyWith(
                       fontFamily: 'Space Grotesk',
-                      fontSize: 24,
+                      // MINGGU 7: Ukuran font teks headline beradaptasi dengan ukuran layar (screen size).
+                      fontSize: narrowCard ? 18 : 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
