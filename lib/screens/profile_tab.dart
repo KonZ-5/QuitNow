@@ -41,6 +41,8 @@ class _ProfileTabState extends State<ProfileTab> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // MINGGU 6 [POIN 1]: SingleChildScrollView membungkus Column (multi-child widget)
+    // sehingga seluruh tab bisa di-scroll dan banyak section tersusun vertikal.
     return SingleChildScrollView(
       // MINGGU 5: Single-child layout Padding membungkus seluruh tab profil.
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
@@ -76,6 +78,7 @@ class _ProfileTabState extends State<ProfileTab> {
           Container(
             decoration: NeoBoxDecoration(color: AppColors.yellow, shadowOffset: 4),
             padding: const EdgeInsets.all(17),
+            // MINGGU 6 [POIN 2]: Row menyejajarkan avatar (kiri) dan nama (kanan).
             child: Row(
               children: [
                 Container(
@@ -84,17 +87,28 @@ class _ProfileTabState extends State<ProfileTab> {
                   height: 62,
                   decoration: NeoBoxDecoration(color: AppColors.cream, shadowOffset: 3),
                   alignment: Alignment.center,
-                  child: const Text(
-                    'RA',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  // MINGGU 6 [BARU - POIN 4]: Stack sebagai wadah inisial avatar.
+                  // alignment center membuat posisi teks "RA" IDENTIK dengan sebelumnya.
+                  // Stack siap menampung lapisan tambahan (mis. badge/status) tanpa mengubah layout.
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: const [
+                      Text(
+                        'RA',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 15),
+                // MINGGU 6 [POIN 3]: Expanded membuat kolom nama mengambil seluruh
+                // sisa lebar di samping avatar.
                 Expanded(
+                  // MINGGU 6 [POIN 2]: Column menumpuk nama dan tanggal bergabung ke bawah.
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -121,16 +135,22 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 24),
 
           // Catatan & Motivasi Pribadi
+          // MINGGU 6 [POIN 2]: Row menyejajarkan judul section (kiri) dan tombol "Ubah catatan" (kanan).
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'CATATAN MOTIVASI HARI INI',
-                style: textTheme.titleSmall?.copyWith(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
+              // MINGGU 6 [BARU - POIN 3]: Judul dibungkus Expanded agar mengambil sisa ruang
+              // di samping tombol "Ubah catatan". Tampilan tidak berubah, hanya mencegah
+              // overflow di layar sempit (teks otomatis wrap ke baris baru).
+              Expanded(
+                child: Text(
+                  'CATATAN MOTIVASI HARI INI',
+                  style: textTheme.titleSmall?.copyWith(
+                    fontFamily: 'Space Grotesk',
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
               ),
               // MINGGU 4: Material & InkWell untuk tombol aksi catatan dengan M3 ripple feedback.
@@ -190,11 +210,14 @@ class _ProfileTabState extends State<ProfileTab> {
                       contentPadding: EdgeInsets.all(12),
                     ),
                   )
+                // MINGGU 6 [POIN 2]: Row menyejajarkan ikon kutip (kiri) dan teks catatan (kanan).
                 : Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(Icons.format_quote, size: 24, color: AppColors.ink),
                       const SizedBox(width: 10),
+                      // MINGGU 6 [POIN 3]: Expanded agar teks catatan mengisi sisa lebar
+                      // dan otomatis wrap ke baris baru.
                       Expanded(
                         child: Text(
                           personalNote,
@@ -320,17 +343,38 @@ class _ProfileTabState extends State<ProfileTab> {
 
           // Tombol Hapus Data
           Center(
-            child: TextButton(
-              onPressed: () => widget.confirm("delete"),
-              style: TextButton.styleFrom(
-                splashFactory: InkSparkle.splashFactory, // MINGGU 4: Ripple M3 Standard
-              ),
-              child: const Text(
-                'Hapus seluruh data',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
+            // MINGGU 6 [DIUBAH]: TextButton bergaris bawah diganti kotak merah bergaya neo
+            // (border ink + bayangan, sama seperti kartu lain di halaman ini) dengan ikon tempat sampah.
+            child: Container(
+              decoration: NeoBoxDecoration(color: Colors.red, shadowOffset: 3),
+              // MINGGU 4: Material + InkWell agar tetap ada ripple M3 di atas kotak merah.
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => widget.confirm("delete"), // fungsi hapus TIDAK berubah
+                  splashFactory: InkSparkle.splashFactory, // MINGGU 4: Ripple M3 Standard
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    // MINGGU 6 [POIN 2]: Row menyejajarkan ikon tempat sampah (kiri) dan teks (kanan).
+                    // mainAxisSize.min supaya kotak hanya selebar isinya dan tetap di tengah halaman.
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // MINGGU 6 [BARU]: Ikon tempat sampah putih agar kontras di atas warna merah.
+                        Icon(Icons.delete_outline, size: 20, color: AppColors.white),
+                        SizedBox(width: 8),
+                        // MINGGU 6 [DIUBAH]: garis bawah dihapus, teks jadi putih.
+                        Text(
+                          'Hapus seluruh data',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

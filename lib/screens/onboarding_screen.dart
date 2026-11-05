@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../widgets/neo_button.dart';
@@ -13,6 +14,10 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int step = 0;
+
+  // MATERI 6: PageController digunakan untuk mengontrol Carousel (PageView).
+  // Controller ini mengatur perpindahan halaman melalui tombol Lanjut.
+  final PageController _pageController = PageController();
 
   final onboardingData = [
     {
@@ -35,46 +40,59 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     },
   ];
 
+  // MATERI 6: dispose digunakan untuk melepaskan PageController
+  // ketika halaman onboarding tidak lagi digunakan.
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final item = onboardingData[step];
-
-    // MINGGU 4: Mengakses skema warna dan tipografi dari Theme context Material 3.
+    // MINGGU 4: Mengakses skema warna dan tipografi Material 3.
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      // MINGGU 4: Menggunakan warna surface dari ColorScheme Material 3.
       backgroundColor: colorScheme.surface == Colors.white
           ? AppColors.cream
           : colorScheme.surface,
       body: SafeArea(
         child: Padding(
-          // MINGGU 5: Single-child layout (Padding) untuk memberikan ruang aman tepi layar.
+          // MINGGU 5: Padding memberikan jarak aman pada tepi layar.
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+
+          // MATERI 6: Column merupakan Multi-Child Widget
+          // yang menyusun beberapa widget secara vertikal.
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top Bar
+              // MATERI 6: Row menyusun logo dan tombol Lewati secara horizontal.
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
-                        // MINGGU 5: Container & Padding untuk tata letak ikon logo.
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           color: AppColors.green,
-                          border: Border.all(color: AppColors.ink, width: 1.5),
+                          border: Border.all(
+                            color: AppColors.ink,
+                            width: 1.5,
+                          ),
                         ),
-                        child: const Icon(Icons.eco, size: 20, color: AppColors.ink),
+                        child: const Icon(
+                          Icons.eco,
+                          size: 20,
+                          color: AppColors.ink,
+                        ),
                       ),
-                      // MINGGU 5: SizedBox sebagai spacer horizontal antar komponen dasar.
                       const SizedBox(width: 7),
                       Text(
                         "QuitNow",
-                        // MINGGU 4: Menggunakan gaya tipografi titleLarge dari TextTheme Material 3.
                         style: textTheme.titleLarge?.copyWith(
                           fontFamily: 'Space Grotesk',
                           fontWeight: FontWeight.bold,
@@ -85,8 +103,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   TextButton(
                     onPressed: widget.onFinish,
-                    // MINGGU 4: Menggunakan foregroundColor dari colorScheme Material 3.
-                    style: TextButton.styleFrom(foregroundColor: colorScheme.onSurface),
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorScheme.onSurface,
+                    ),
                     child: const Text(
                       "Lewati",
                       style: TextStyle(
@@ -98,84 +117,180 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ],
               ),
-              // MINGGU 5: SizedBox untuk menentukan jarak vertikal antar elemen.
+
               const SizedBox(height: 20),
 
-              // Art Box (Single-child layout Container dengan dimensi spesifik)
-              Container(
-                height: 280,
-                width: double.infinity,
-                decoration: NeoBoxDecoration(
-                  color: item["color"] as Color,
-                  shadowOffset: 7,
-                  borderWidth: 3,
-                ),
-                child: Center(
-                  child: _buildArt(item["art"] as String),
-                ),
-              ),
-              const SizedBox(height: 24),
+              // MATERI 6: Expanded memberikan ruang fleksibel
+              // untuk Carousel agar mengisi area yang tersedia.
+              Expanded(
+                child: PageView.builder(
+                  // MATERI 6: PageView digunakan sebagai Carousel.
+                  // Pengguna dapat menggeser onboarding ke kiri dan kanan.
+                  controller: _pageController,
+                  itemCount: onboardingData.length,
 
-              Text(
-                "0${step + 1} / 03",
-                // MINGGU 4: Label indikator angka menggunakan labelSmall TextTheme.
-                style: textTheme.labelSmall?.copyWith(
-                  fontFamily: 'Space Grotesk',
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
-                  color: colorScheme.onSurface,
+                  // MATERI 6: onPageChanged memperbarui indikator
+                  // ketika pengguna berpindah slide secara manual.
+                  onPageChanged: (index) {
+                    setState(() {
+                      step = index;
+                    });
+                  },
+
+                  itemBuilder: (context, index) {
+                    final item = onboardingData[index];
+
+                    // MATERI 6: SingleChildScrollView menjaga
+                    // konten tetap dapat digulir pada layar pendek.
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Art Box
+                          Container(
+                            height: 280,
+                            width: double.infinity,
+                            decoration: NeoBoxDecoration(
+                              color: item["color"] as Color,
+                              shadowOffset: 7,
+                              borderWidth: 3,
+                            ),
+
+                            // MATERI 6: Stack memungkinkan beberapa
+                            // widget ditumpuk dalam satu area.
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Ikon utama tetap berada di tengah.
+                                Center(
+                                  child: _buildArt(
+                                    item["art"] as String,
+                                  ),
+                                ),
+
+                                // MATERI 6: Positioned menempatkan
+                                // ikon dekorasi di sudut kanan atas.
+                                Positioned(
+                                  top: 14,
+                                  right: 14,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(7),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white,
+                                      border: Border.all(
+                                        color: AppColors.ink,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.auto_awesome,
+                                      size: 19,
+                                      color: AppColors.ink,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Indikator nomor halaman.
+                          Text(
+                            "0${index + 1} / 03",
+                            style: textTheme.labelSmall?.copyWith(
+                              fontFamily: 'Space Grotesk',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          // Judul onboarding.
+                          Text(
+                            item["title"] as String,
+                            style: textTheme.headlineMedium?.copyWith(
+                              fontFamily: 'Space Grotesk',
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              height: 1.05,
+                              letterSpacing: -1.0,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          // Deskripsi onboarding.
+                          Text(
+                            item["text"] as String,
+                            style: textTheme.bodyLarge?.copyWith(
+                              color: AppColors.text2,
+                              fontSize: 15,
+                              height: 1.55,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                item["title"] as String,
-                // MINGGU 4: Judul menggunakan headlineMedium dari TextTheme Material 3.
-                style: textTheme.headlineMedium?.copyWith(
-                  fontFamily: 'Space Grotesk',
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  height: 1.05,
-                  letterSpacing: -1.0,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                item["text"] as String,
-                // MINGGU 4: Teks penjelasan menggunakan bodyLarge dari TextTheme.
-                style: textTheme.bodyLarge?.copyWith(
-                  color: AppColors.text2,
-                  fontSize: 15,
-                  height: 1.55,
-                ),
-              ),
-              const Spacer(),
+
+              const SizedBox(height: 16),
 
               // Actions & Dots
+              // MATERI 6: Row menyusun indikator dan tombol secara horizontal.
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: List.generate(3, (i) {
-                      return Container(
-                        // MINGGU 5: Container dengan margin sebagai pembatas dimensi titik indikator.
-                        margin: const EdgeInsets.only(right: 6),
-                        width: i == step ? 27 : 9,
-                        height: 9,
-                        decoration: BoxDecoration(
-                          color: i == step ? AppColors.ink : AppColors.white,
-                          border: Border.all(color: AppColors.ink, width: 1.5),
-                        ),
-                      );
-                    }),
+                  // MATERI 6: ListView.builder menampilkan indikator
+                  // halaman secara horizontal dan efisien.
+                  SizedBox(
+                    width: 90,
+                    height: 15,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: onboardingData.length,
+                      itemBuilder: (context, i) {
+                        return Container(
+                          margin: const EdgeInsets.only(right: 6),
+                          width: i == step ? 27 : 9,
+                          height: 9,
+                          decoration: BoxDecoration(
+                            color: i == step
+                                ? AppColors.ink
+                                : AppColors.white,
+                            border: Border.all(
+                              color: AppColors.ink,
+                              width: 1.5,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
+
+                  // Tombol Lanjut dan Mulai tetap dipertahankan.
                   NeoButton(
                     fullWidth: false,
                     text: step == 2 ? "Mulai" : "Lanjut",
-                    icon: const Icon(Icons.arrow_forward, color: AppColors.ink),
+                    icon: const Icon(
+                      Icons.arrow_forward,
+                      color: AppColors.ink,
+                    ),
                     onPressed: () {
-                      if (step < 2) {
-                        setState(() => step++);
+                      if (step < onboardingData.length - 1) {
+                        // MATERI 6: animateToPage menggeser Carousel
+                        // dengan animasi ketika tombol Lanjut ditekan.
+                        _pageController.animateToPage(
+                          step + 1,
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeInOut,
+                        );
                       } else {
                         widget.onFinish();
                       }
@@ -192,11 +307,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildArt(String artType) {
     if (artType == "lungs") {
-      return const Icon(Icons.air, size: 90, color: AppColors.ink);
+      return const Icon(
+        Icons.air,
+        size: 90,
+        color: AppColors.ink,
+      );
     } else if (artType == "chart") {
-      return const Icon(Icons.show_chart, size: 90, color: AppColors.ink);
+      return const Icon(
+        Icons.show_chart,
+        size: 90,
+        color: AppColors.ink,
+      );
     } else {
-      return const Icon(Icons.emoji_events, size: 90, color: AppColors.ink);
+      return const Icon(
+        Icons.emoji_events,
+        size: 90,
+        color: AppColors.ink,
+      );
     }
   }
-} 
+}

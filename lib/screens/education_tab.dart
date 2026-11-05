@@ -19,6 +19,8 @@ class _EducationTabState extends State<EducationTab> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // MINGGU 6 [POIN 1]: SingleChildScrollView membungkus Column (multi-child widget)
+    // sehingga seluruh tab bisa di-scroll dan banyak widget tersusun vertikal.
     return SingleChildScrollView(
       // MINGGU 5: Single-child layout Padding membungkus seluruh tab edukasi.
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
@@ -58,9 +60,13 @@ class _EducationTabState extends State<EducationTab> {
             ),
             // MINGGU 5: Padding internal kartu pilihan hari ini.
             padding: const EdgeInsets.all(19),
+            // MINGGU 6 [POIN 2]: Row menyejajarkan teks (kiri) dan ikon buku (kanan).
             child: Row(
               children: [
+                // MINGGU 6 [POIN 3]: Expanded membuat kolom teks mengambil seluruh sisa
+                // lebar di samping ikon, sehingga ikon tetap menempel di kanan.
                 Expanded(
+                  // MINGGU 6 [POIN 2]: Column menumpuk label dan judul ke bawah.
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
@@ -93,9 +99,15 @@ class _EducationTabState extends State<EducationTab> {
           const SizedBox(height: 24),
 
           // Article List
+          // MINGGU 6 [POIN 5]: ListView.builder menampilkan daftar artikel dari globalArticles.
+          // shrinkWrap + NeverScrollableScrollPhysics wajib karena ListView ini
+          // berada di dalam SingleChildScrollView (agar tidak bentrok scroll).
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
+            // MINGGU 6 [BARU]: Clip.none supaya bayangan neo di sisi kanan/bawah
+            // kartu artikel tidak terpotong oleh batas ListView.
+            clipBehavior: Clip.none,
             itemCount: globalArticles.length,
             itemBuilder: (context, index) {
               final article = globalArticles[index];
@@ -107,6 +119,7 @@ class _EducationTabState extends State<EducationTab> {
                   color: AppColors.white,
                   shadowOffset: 3,
                 ),
+                // MINGGU 6 [POIN 2]: Column menumpuk baris artikel dan konten tambahan (accordion).
                 child: Column(
                   children: [
                     // MINGGU 4: Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback).
@@ -124,6 +137,7 @@ class _EducationTabState extends State<EducationTab> {
                         child: Padding(
                           // MINGGU 5: Padding ruang dalam baris artikel.
                           padding: const EdgeInsets.all(15),
+                          // MINGGU 6 [POIN 2]: Row = ikon (kiri), teks (tengah), panah (kanan).
                           child: Row(
                             children: [
                               Container(
@@ -136,9 +150,18 @@ class _EducationTabState extends State<EducationTab> {
                                     width: 1.5,
                                   ),
                                 ),
-                                child: Icon(article.icon, color: AppColors.ink),
+                                // MINGGU 6 [BARU - POIN 4]: Stack sebagai wadah ikon artikel.
+                                // alignment center membuat posisi ikon IDENTIK dengan sebelumnya.
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Icon(article.icon, color: AppColors.ink),
+                                  ],
+                                ),
                               ),
                               const SizedBox(width: 13),
+                              // MINGGU 6 [POIN 3]: Expanded agar teks mengisi sisa lebar
+                              // dan otomatis wrap ke baris baru, panah tetap di kanan.
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,6 +220,7 @@ class _EducationTabState extends State<EducationTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 12),
+                            // MINGGU 6 [POIN 2]: Row menyejajarkan ikon jam dan teks waktu baca.
                             Row(
                               children: [
                                 const Icon(
