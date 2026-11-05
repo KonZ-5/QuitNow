@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
+import 'utils/responsive.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/setup_screen.dart';
 import 'screens/app_shell.dart';
@@ -9,7 +10,6 @@ void main() {
 }
 
 class QuitNowApp extends StatelessWidget {
-  // PERBAIKAN 1: Menggunakan super.key untuk menggantikan gaya penulisan konstruktor lama
   const QuitNowApp({super.key});
 
   @override
@@ -21,13 +21,28 @@ class QuitNowApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.background,
         fontFamily: 'Inter',
       ),
+      // RESPONSIVE: builder berada di atas Navigator, sehingga berlaku untuk
+      // semua halaman dan dialog. Skala teks sistem dibatasi (0.85x - 1.3x)
+      // agar pengguna dengan font besar tidak membuat layout overflow,
+      // tetapi aksesibilitas tetap terjaga.
+      builder: (context, child) {
+        final mq = MediaQuery.of(context);
+        return MediaQuery(
+          data: mq.copyWith(
+            textScaler: mq.textScaler.clamp(
+              minScaleFactor: 0.85,
+              maxScaleFactor: 1.3,
+            ),
+          ),
+          child: child!,
+        );
+      },
       home: const SiteShell(),
     );
   }
 }
 
 class SiteShell extends StatefulWidget {
-  // PERBAIKAN 2: Menggunakan super.key untuk konsistensi struktur kode modern
   const SiteShell({super.key});
 
   @override
@@ -41,23 +56,56 @@ class _SiteShellState extends State<SiteShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Center(
-        child: Container(
-          width: 430,
-          constraints: const BoxConstraints(maxWidth: 430, minHeight: double.infinity),
-          decoration: BoxDecoration(
-            color: AppColors.cream,
-            border: Border.all(color: AppColors.ink, width: 3),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x16000000),
-                offset: Offset(0, 0),
-                blurRadius: 40,
-              )
-            ],
-          ),
-          child: _buildCurrentPhase(),
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // CONSTRAINT: sebelumnya lebar dikunci 430 (Container(width: 430)),
+          // sehingga tidak fleksibel. Sekarang:
+          //  - Ponsel/tablet kecil: aplikasi mengisi SELURUH layar (tanpa bingkai).
+          //  - Layar sangat lebar (web/desktop): dibatasi maxFrameWidth,
+          //    dipusatkan, dan diberi bingkai.
+          final bool isFramed =
+              constraints.maxWidth > Responsive.maxFrameWidth;
+          final double frameWidth =
+              isFramed ? Responsive.maxFrameWidth : constraints.maxWidth;
+          final double borderInset = isFramed ? 6 : 0; // 2 x border 3px
+
+          final mq = MediaQuery.of(context);
+
+          return Center(
+            child: Container(
+              width: frameWidth,
+              height: constraints.maxHeight,
+              decoration: BoxDecoration(
+                color: AppColors.cream,
+                border: isFramed
+                    ? Border.all(color: AppColors.ink, width: 3)
+                    : null,
+                boxShadow: isFramed
+                    ? const [
+                        BoxShadow(
+                          color: Color(0x16000000),
+                          offset: Offset(0, 0),
+                          blurRadius: 40,
+                        )
+                      ]
+                    : null,
+              ),
+              // PARENT -> CHILD: child (seluruh halaman) diberi tahu ukuran
+              // sebenarnya yang tersedia lewat MediaQuery, sehingga
+              // Responsive.of(context) di halaman mana pun membaca lebar
+              // bingkai, bukan lebar jendela browser.
+              child: MediaQuery(
+                data: mq.copyWith(
+                  size: Size(
+                    frameWidth - borderInset,
+                    constraints.maxHeight - borderInset,
+                  ),
+                ),
+                child: _buildCurrentPhase(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
