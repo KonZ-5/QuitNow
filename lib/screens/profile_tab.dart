@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
+import '../utils/responsive.dart';
+import '../widgets/adaptive_layout.dart';
 
 class ProfileTab extends StatefulWidget {
   final VoidCallback editJourney;
@@ -40,13 +42,21 @@ class _ProfileTabState extends State<ProfileTab> {
     // MINGGU 4: Penggunaan Skema Warna & Tipografi Material 3.
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    
+    // MINGGU 7: Membaca ukuran layar (screen size) menggunakan utility kelas Responsive.
+    final r = Responsive.of(context);
+    final bool narrow = r.isUltraNarrow;
 
     // MINGGU 6 [POIN 1]: SingleChildScrollView membungkus Column (multi-child widget)
     // sehingga seluruh tab bisa di-scroll dan banyak section tersusun vertikal.
     return SingleChildScrollView(
       // MINGGU 5: Single-child layout Padding membungkus seluruh tab profil.
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
-      child: Column(
+      // MINGGU 7: Padding tab melakukan adaptasi layout (layout adaptation) terhadap ukuran layar.
+      padding: EdgeInsets.fromLTRB(r.pagePadding, 24, r.pagePadding, r.pageBottomPadding),
+      // MINGGU 7: CenteredContent memberikan batasan (constraint) lebar konten maksimum di tablet/web.
+      child: CenteredContent(
+        maxWidth: Responsive.maxContentWidth,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -66,7 +76,8 @@ class _ProfileTabState extends State<ProfileTab> {
             // MINGGU 4: Judul halaman menggunakan headlineMedium Material 3.
             style: textTheme.headlineMedium?.copyWith(
               fontFamily: 'Space Grotesk',
-              fontSize: 30,
+              // MINGGU 7: Ukuran font judul beradaptasi (layout adaptation) dengan kategori screen size layar.
+              fontSize: r.pick(ultraNarrow: 22.0, compact: 30.0, expanded: 34.0),
               fontWeight: FontWeight.bold,
               letterSpacing: -1,
               color: colorScheme.onSurface,
@@ -74,17 +85,23 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           const SizedBox(height: 24),
 
+          // MINGGU 7: AdaptiveColumns menyesuaikan layout menjadi 1 atau 2 kolom bergantung pada orientasi (orientation).
+          AdaptiveColumns(
+            primary: [
           // User Card
           Container(
             decoration: NeoBoxDecoration(color: AppColors.yellow, shadowOffset: 4),
-            padding: const EdgeInsets.all(17),
+            // MINGGU 7: Padding kartu profil user beradaptasi (layout adaptation) dengan ukuran layar.
+            padding: EdgeInsets.all(narrow ? 10 : 17),
             // MINGGU 6 [POIN 2]: Row menyejajarkan avatar (kiri) dan nama (kanan).
-            child: Row(
+            // MINGGU 7: AdaptiveRow menyejajarkan avatar dan keterangan profil berdasarkan ketersediaan ruang.
+            child: AdaptiveRow(
               children: [
                 Container(
                   // MINGGU 5: Container dengan dimensi tetap untuk avatar pengguna.
-                  width: 62,
-                  height: 62,
+                  // MINGGU 7: Dimensi container avatar beradaptasi (layout adaptation) dengan ukuran layar (screen size).
+                  width: narrow ? 48 : 62,
+                  height: narrow ? 48 : 62,
                   decoration: NeoBoxDecoration(color: AppColors.cream, shadowOffset: 3),
                   alignment: Alignment.center,
                   // MINGGU 6 [BARU - POIN 4]: Stack sebagai wadah inisial avatar.
@@ -104,7 +121,8 @@ class _ProfileTabState extends State<ProfileTab> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 15),
+                // MINGGU 7: Jarak pemisah antar elemen beradaptasi (layout adaptation) dengan layar sempit.
+                SizedBox(width: narrow ? 10 : 15),
                 // MINGGU 6 [POIN 3]: Expanded membuat kolom nama mengambil seluruh
                 // sisa lebar di samping avatar.
                 Expanded(
@@ -117,7 +135,8 @@ class _ProfileTabState extends State<ProfileTab> {
                         // MINGGU 4: Nama profil menggunakan titleMedium.
                         style: textTheme.titleMedium?.copyWith(
                           fontFamily: 'Space Grotesk',
-                          fontSize: 20,
+                          // MINGGU 7: Ukuran font teks nama beradaptasi dengan ukuran layar (screen size).
+                          fontSize: narrow ? 16 : 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -136,7 +155,8 @@ class _ProfileTabState extends State<ProfileTab> {
 
           // Catatan & Motivasi Pribadi
           // MINGGU 6 [POIN 2]: Row menyejajarkan judul section (kiri) dan tombol "Ubah catatan" (kanan).
-          Row(
+          // MINGGU 7: AdaptiveRow mengatur judul dan tombol fungsi catatan untuk adaptasi layout yang fleksibel.
+          AdaptiveRow(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // MINGGU 6 [BARU - POIN 3]: Judul dibungkus Expanded agar mengambil sisa ruang
@@ -211,7 +231,8 @@ class _ProfileTabState extends State<ProfileTab> {
                     ),
                   )
                 // MINGGU 6 [POIN 2]: Row menyejajarkan ikon kutip (kiri) dan teks catatan (kanan).
-                : Row(
+                // MINGGU 7: Menggunakan AdaptiveRow untuk mode view catatan agar tata letaknya beradaptasi.
+                : AdaptiveRow(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(Icons.format_quote, size: 24, color: AppColors.ink),
@@ -232,8 +253,8 @@ class _ProfileTabState extends State<ProfileTab> {
                     ],
                   ),
           ),
-          const SizedBox(height: 24),
-
+            ],
+            secondary: [
           // Settings Section
           Text(
             'PERJALANAN',
@@ -339,6 +360,8 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
           ),
+            ],
+          ),
           const SizedBox(height: 32),
 
           // Tombol Hapus Data
@@ -353,23 +376,28 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: InkWell(
                   onTap: () => widget.confirm("delete"), // fungsi hapus TIDAK berubah
                   splashFactory: InkSparkle.splashFactory, // MINGGU 4: Ripple M3 Standard
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Padding(
+                    // MINGGU 7: Padding tombol hapus beradaptasi (layout adaptation) terhadap ukuran layar.
+                    padding: EdgeInsets.symmetric(horizontal: narrow ? 12 : 20, vertical: 12),
                     // MINGGU 6 [POIN 2]: Row menyejajarkan ikon tempat sampah (kiri) dan teks (kanan).
                     // mainAxisSize.min supaya kotak hanya selebar isinya dan tetap di tengah halaman.
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         // MINGGU 6 [BARU]: Ikon tempat sampah putih agar kontras di atas warna merah.
-                        Icon(Icons.delete_outline, size: 20, color: AppColors.white),
-                        SizedBox(width: 8),
+                        const Icon(Icons.delete_outline, size: 20, color: AppColors.white),
+                        const SizedBox(width: 8),
                         // MINGGU 6 [DIUBAH]: garis bawah dihapus, teks jadi putih.
-                        Text(
-                          'Hapus seluruh data',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                        // Flexible: teks membungkus baris bila tombol sempit.
+                        const Flexible(
+                          child: Text(
+                            'Hapus seluruh data',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ],
@@ -394,6 +422,7 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
