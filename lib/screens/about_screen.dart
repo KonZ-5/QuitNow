@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
+import '../utils/responsive.dart';
+import '../widgets/adaptive_layout.dart';
 
 // MINGGU 6 [BARU]: Model data sederhana untuk item fitur.
 // Dipakai oleh ListView.separated supaya 4 item fitur tidak ditulis manual satu-satu.
@@ -59,6 +61,10 @@ class AboutQuitNowScreen extends StatelessWidget {
     // MINGGU 4: Mengambil skema warna dan tipografi dari Theme context Material 3.
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final r = Responsive.of(context);
+    
+    // MINGGU 7: Membaca ukuran layar (screen size) melalui utility r.isUltraNarrow untuk menentukan nilai responsif.
+    final bool narrow = r.isUltraNarrow;
 
     return Scaffold(
       // MINGGU 4: Menggunakan warna permukaan dari ColorScheme.
@@ -75,13 +81,15 @@ class AboutQuitNowScreen extends StatelessWidget {
               // Header Top Bar
               // MINGGU 5: Container dengan padding simetris sebagai pembungkus header.
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                // MINGGU 7: Padding vertikal melakukan adaptasi tata letak (layout adaptation) berdasarkan variabel narrow.
+                padding: EdgeInsets.symmetric(horizontal: r.pagePadding, vertical: narrow ? 10 : 15),
                 decoration: const BoxDecoration(
                   color: AppColors.cream,
                   border: Border(bottom: BorderSide(color: AppColors.ink, width: 2)),
                 ),
                 // MINGGU 6 [POIN 2]: Row menyusun tombol kembali + judul secara horizontal.
-                child: Row(
+                // MINGGU 7: AdaptiveRow digunakan untuk adaptasi layout berdasarkan ukuran dan orientasi layar.
+                child: AdaptiveRow(
                   children: [
                     // MINGGU 4: Material & InkWell untuk mendukung Material 3 State Layers (Ripple Feedback).
                     Material(
@@ -141,12 +149,22 @@ class AboutQuitNowScreen extends StatelessWidget {
                 ),
               ),
 
-              Padding(
+              // RESPONSIVE: CenteredContent membatasi lebar di tablet/web.
+              // MINGGU 7: CenteredContent memberikan batasan (constraint) lebar maksimal agar konten tidak melebar berlebihan di layar besar.
+              CenteredContent(
+                maxWidth: Responsive.maxContentWidth,
+                child: Padding(
                 // MINGGU 5: Single-child layout Padding untuk membungkus konten utama.
-                padding: const EdgeInsets.all(22),
+                // MINGGU 7: Nilai padding konten utama beradaptasi (layout adaptation) mengikuti ukuran layar (screen size).
+                padding: EdgeInsets.all(narrow ? 12 : r.isWide ? 28 : 22),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ADAPTIVE: 1 kolom di portrait; 2 kolom di landscape/lebar
+                    // (kiri: branding + deskripsi, kanan: fitur + komitmen).
+                    // MINGGU 7: AdaptiveColumns menyesuaikan layout menjadi 1 atau 2 kolom berdasarkan orientasi layar (orientation).
+                    AdaptiveColumns(
+                      primary: [
                     // Hero Branding Card
                     // MINGGU 6 [BARU - POIN 4]: Stack membungkus hero card agar ada lapisan
                     // kedua (kotak badge "V1.0") yang menumpuk di atas kartu hijau.
@@ -162,7 +180,8 @@ class AboutQuitNowScreen extends StatelessWidget {
                         shadowOffset: 5,
                         borderWidth: 3,
                       ),
-                      padding: const EdgeInsets.all(22),
+                      // MINGGU 7: Padding internal hero card beradaptasi (layout adaptation) terhadap ukuran layar.
+                      padding: EdgeInsets.all(narrow ? 14 : 22),
                       // MINGGU 6 [POIN 2]: Column menumpuk ikon, nama aplikasi, dan versi ke bawah.
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +200,8 @@ class AboutQuitNowScreen extends StatelessWidget {
                             // MINGGU 4: Tipografi merek utama menggunakan headlineMedium Material 3.
                             style: textTheme.headlineMedium?.copyWith(
                               fontFamily: 'Space Grotesk',
-                              fontSize: 32,
+                              // MINGGU 7: Ukuran font judul beradaptasi dengan ukuran layar (screen size).
+                              fontSize: narrow ? 24 : 32,
                               fontWeight: FontWeight.bold,
                               letterSpacing: -1,
                               color: colorScheme.onSurface,
@@ -245,20 +265,22 @@ class AboutQuitNowScreen extends StatelessWidget {
                         color: AppColors.white,
                         shadowOffset: 3,
                       ),
-                      padding: const EdgeInsets.all(18),
+                      // MINGGU 7: Padding konten deskripsi beradaptasi (layout adaptation) terhadap ukuran layar.
+                      padding: EdgeInsets.all(narrow ? 12 : 18),
                       child: Text(
                         "QuitNow adalah aplikasi kesehatan mobile yang dirancang untuk membantu pengguna menjalani proses berhenti merokok melalui pemantauan progres harian, pencapaian target, edukasi kesehatan, dan pembentukan kebiasaan positif.",
                         // MINGGU 4: Teks deskripsi terhubung dengan bodyMedium Material 3.
                         style: textTheme.bodyMedium?.copyWith(
-                          fontSize: 14,
+                          // MINGGU 7: Ukuran font mengecil jika layar berada di kondisi narrow (screen size).
+                          fontSize: narrow ? 12 : 14,
                           color: AppColors.ink,
                           height: 1.6,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-
+                      ],
+                      secondary: [
                     // Seksi Fitur Utama
                     Text(
                       "FITUR UNGGULAN",
@@ -308,7 +330,8 @@ class AboutQuitNowScreen extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(18),
                       // MINGGU 6 [POIN 2]: Row menyejajarkan kotak ikon (kiri) dan teks (kanan).
-                      child: Row(
+                      // MINGGU 7: AdaptiveRow digunakan pada bagian SDG3 agar tata letaknya fleksibel (layout adaptation).
+                      child: AdaptiveRow(
                         children: [
                           Container(
                             width: 48,
@@ -351,6 +374,8 @@ class AboutQuitNowScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                      ],
+                    ),
                     const SizedBox(height: 30),
 
                     // Copyright Note
@@ -368,6 +393,7 @@ class AboutQuitNowScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
               ),
             ],
           ),
@@ -394,7 +420,8 @@ class AboutQuitNowScreen extends StatelessWidget {
       // MINGGU 5: Padding simetris untuk item fitur.
       padding: const EdgeInsets.all(14),
       // MINGGU 6 [POIN 2]: Row = kotak ikon di kiri, Column teks di kanan.
-      child: Row(
+      // MINGGU 7: AdaptiveRow membungkus komponen fitur agar susunannya beradaptasi (layout adaptation).
+      child: AdaptiveRow(
         children: [
           Container(
             width: 44,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
+import '../utils/responsive.dart';
+import '../widgets/adaptive_layout.dart';
 
 class EducationTab extends StatefulWidget {
   final Function(String)? openArticle;
@@ -18,13 +20,21 @@ class _EducationTabState extends State<EducationTab> {
     // MINGGU 4: Penggunaan Skema Warna & Tipografi Material 3.
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    
+    // MINGGU 7: Membaca ukuran layar (screen size) untuk menentukan nilai responsif.
+    final r = Responsive.of(context);
+    final bool narrow = r.isUltraNarrow;
 
     // MINGGU 6 [POIN 1]: SingleChildScrollView membungkus Column (multi-child widget)
     // sehingga seluruh tab bisa di-scroll dan banyak widget tersusun vertikal.
     return SingleChildScrollView(
       // MINGGU 5: Single-child layout Padding membungkus seluruh tab edukasi.
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
-      child: Column(
+      // MINGGU 7: Padding tab melakukan adaptasi tata letak (layout adaptation) terhadap ukuran layar.
+      padding: EdgeInsets.fromLTRB(r.pagePadding, 24, r.pagePadding, r.pageBottomPadding),
+      // MINGGU 7: CenteredContent membatasi lebar maksimal konten (constraint) pada layar besar.
+      child: CenteredContent(
+        maxWidth: Responsive.maxContentWidth,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -44,7 +54,8 @@ class _EducationTabState extends State<EducationTab> {
             // MINGGU 4: Judul utama menggunakan headlineMedium.
             style: textTheme.headlineMedium?.copyWith(
               fontFamily: 'Space Grotesk',
-              fontSize: 30,
+              // MINGGU 7: Ukuran font beradaptasi (layout adaptation) berdasarkan deteksi ukuran layar.
+              fontSize: r.pick(ultraNarrow: 22.0, compact: 30.0, expanded: 34.0),
               fontWeight: FontWeight.bold,
               letterSpacing: -1,
               color: colorScheme.onSurface,
@@ -59,9 +70,11 @@ class _EducationTabState extends State<EducationTab> {
               shadowOffset: 4,
             ),
             // MINGGU 5: Padding internal kartu pilihan hari ini.
-            padding: const EdgeInsets.all(19),
+            // MINGGU 7: Padding Lead Card melakukan adaptasi tata letak (layout adaptation) terhadap layar sempit.
+            padding: EdgeInsets.all(narrow ? 12 : 19),
             // MINGGU 6 [POIN 2]: Row menyejajarkan teks (kiri) dan ikon buku (kanan).
-            child: Row(
+            // MINGGU 7: AdaptiveRow mengatur tata letak teks dan ikon berdasarkan ketersediaan ruang layar.
+            child: AdaptiveRow(
               children: [
                 // MINGGU 6 [POIN 3]: Expanded membuat kolom teks mengambil seluruh sisa
                 // lebar di samping ikon, sehingga ikon tetap menempel di kanan.
@@ -69,8 +82,8 @@ class _EducationTabState extends State<EducationTab> {
                   // MINGGU 6 [POIN 2]: Column menumpuk label dan judul ke bawah.
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'PILIHAN HARI INI',
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
@@ -79,12 +92,13 @@ class _EducationTabState extends State<EducationTab> {
                           color: AppColors.white,
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Text(
                         'Informasi kecil, dampak besar.',
                         style: TextStyle(
                           fontFamily: 'Space Grotesk',
-                          fontSize: 20,
+                          // MINGGU 7: Ukuran font deskripsi beradaptasi dengan ukuran layar (screen size).
+                          fontSize: narrow ? 15 : 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.white,
                         ),
@@ -92,7 +106,9 @@ class _EducationTabState extends State<EducationTab> {
                     ],
                   ),
                 ),
-                const Icon(Icons.menu_book, size: 40, color: AppColors.yellow),
+                // MINGGU 7: Jarak antar elemen membesar atau mengecil sebagai bagian dari adaptasi layout (layout adaptation).
+                SizedBox(width: narrow ? 8 : 12),
+                Icon(Icons.menu_book, size: narrow ? 28 : 40, color: AppColors.yellow),
               ],
             ),
           ),
@@ -102,14 +118,9 @@ class _EducationTabState extends State<EducationTab> {
           // MINGGU 6 [POIN 5]: ListView.builder menampilkan daftar artikel dari globalArticles.
           // shrinkWrap + NeverScrollableScrollPhysics wajib karena ListView ini
           // berada di dalam SingleChildScrollView (agar tidak bentrok scroll).
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            // MINGGU 6 [BARU]: Clip.none supaya bayangan neo di sisi kanan/bawah
-            // kartu artikel tidak terpotong oleh batas ListView.
-            clipBehavior: Clip.none,
-            itemCount: globalArticles.length,
-            itemBuilder: (context, index) {
+          // MINGGU 7: LayoutBuilder mengatur jumlah kolom artikel berdasarkan batasan lebar (constraints).
+          LayoutBuilder(builder: (context, constraints) {
+            Widget buildArticle(BuildContext context, int index) {
               final article = globalArticles[index];
               final isExpanded = expandedIndex == index;
 
@@ -136,13 +147,16 @@ class _EducationTabState extends State<EducationTab> {
                         },
                         child: Padding(
                           // MINGGU 5: Padding ruang dalam baris artikel.
-                          padding: const EdgeInsets.all(15),
+                          // MINGGU 7: Padding dalam baris artikel melakukan adaptasi layout (layout adaptation).
+                          padding: EdgeInsets.all(narrow ? 10 : 15),
                           // MINGGU 6 [POIN 2]: Row = ikon (kiri), teks (tengah), panah (kanan).
-                          child: Row(
+                          // MINGGU 7: AdaptiveRow digunakan agar baris item artikel beradaptasi secara fleksibel.
+                          child: AdaptiveRow(
                             children: [
                               Container(
-                                width: 43,
-                                height: 43,
+                                // MINGGU 7: Dimensi wadah ikon beradaptasi dengan ukuran layar (screen size).
+                                width: narrow ? 36 : 43,
+                                height: narrow ? 36 : 43,
                                 decoration: BoxDecoration(
                                   color: AppColors.cream,
                                   border: Border.all(
@@ -159,7 +173,8 @@ class _EducationTabState extends State<EducationTab> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 13),
+                              // MINGGU 7: Lebar pembatas elemen antar kolom teks melakukan adaptasi layout (layout adaptation).
+                              SizedBox(width: narrow ? 8 : 13),
                               // MINGGU 6 [POIN 3]: Expanded agar teks mengisi sisa lebar
                               // dan otomatis wrap ke baris baru, panah tetap di kanan.
                               Expanded(
@@ -269,9 +284,37 @@ class _EducationTabState extends State<EducationTab> {
                   ],
                 ),
               );
-            },
-          ),
+            }
+
+            // MINGGU 7: Logika adaptasi layout artikel menjadi 2 kolom grid berdasarkan batasan (constraints) lebar layar maksimum.
+            if (constraints.maxWidth >= 560) {
+              Widget column(int start) => Column(
+                    children: [
+                      for (int i = start; i < globalArticles.length; i += 2)
+                        buildArticle(context, i),
+                    ],
+                  );
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: column(0)),
+                  const SizedBox(width: 20),
+                  Expanded(child: column(1)),
+                ],
+              );
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.zero,
+              itemCount: globalArticles.length,
+              itemBuilder: buildArticle,
+            );
+          }),
         ],
+      ),
       ),
     );
   }
