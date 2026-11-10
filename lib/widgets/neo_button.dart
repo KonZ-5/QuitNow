@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
+import '../utils/responsive.dart';
 
 class NeoButton extends StatefulWidget {
   final String text;
@@ -8,7 +9,6 @@ class NeoButton extends StatefulWidget {
   final Widget? icon;
   final bool fullWidth;
 
-  // PERBAIKAN: Mengubah gaya penulisan konstruktor lama menjadi super.key yang ringkas
   const NeoButton({
     super.key,
     required this.text,
@@ -27,6 +27,21 @@ class _NeoButtonState extends State<NeoButton> {
 
   @override
   Widget build(BuildContext context) {
+    final r = Responsive.of(context);
+
+    final label = Text(
+      widget.text,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontFamily: 'Space Grotesk',
+        fontWeight: FontWeight.bold,
+        fontSize: r.isUltraNarrow ? 14 : 16,
+        color: AppColors.ink,
+      ),
+    );
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
@@ -37,8 +52,11 @@ class _NeoButtonState extends State<NeoButton> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100),
         width: widget.fullWidth ? double.infinity : null,
-        constraints: const BoxConstraints(minHeight: 52),
-        padding: const EdgeInsets.symmetric(horizontal: 18),
+        constraints: BoxConstraints(minHeight: r.isUltraNarrow ? 46 : 52),
+        padding: EdgeInsets.symmetric(
+          horizontal: r.isUltraNarrow ? 10 : 18,
+          vertical: 6,
+        ),
         decoration: BoxDecoration(
           color: widget.backgroundColor,
           border: Border.all(color: AppColors.ink, width: 2),
@@ -55,24 +73,27 @@ class _NeoButtonState extends State<NeoButton> {
           _isPressed ? 3.0 : 0.0,
           0.0,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
-          children: [
-            Text(
-              widget.text,
-              style: const TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: AppColors.ink,
-              ),
-            ),
-            if (widget.icon != null) ...[
-              const SizedBox(width: 9),
-              widget.icon!,
-            ],
-          ],
+        // CONSTRAINT: LayoutBuilder memeriksa apakah parent memberi lebar
+        // terbatas. Jika ya, teks dibungkus Flexible sehingga membungkus
+        // baris (wrap) alih-alih overflow. Jika parent memberi lebar tak
+        // terbatas (mis. langsung di dalam Row), teks tampil apa adanya
+        // karena Flexible di lebar tak terbatas akan menimbulkan error.
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bool bounded = constraints.hasBoundedWidth;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize:
+                  widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+              children: [
+                bounded ? Flexible(child: label) : label,
+                if (widget.icon != null) ...[
+                  SizedBox(width: r.isUltraNarrow ? 6 : 9),
+                  widget.icon!,
+                ],
+              ],
+            );
+          },
         ),
       ),
     );
